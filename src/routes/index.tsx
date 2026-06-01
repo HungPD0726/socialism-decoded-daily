@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { MonthCalendar } from "@/components/MonthCalendar";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -126,23 +127,7 @@ function Home() {
           </div>
 
           <aside className="md:col-span-5">
-            <div className="relative rounded-sm border border-border bg-card p-8 shadow-[8px_8px_0_0_oklch(0.46_0.19_27)]">
-              <div className="absolute -top-3 left-6 bg-card px-3 text-xs uppercase tracking-[0.25em] text-primary">
-                Trang hôm nay
-              </div>
-              <div className="font-display text-6xl text-primary">01</div>
-              <div className="mt-1 text-sm uppercase tracking-[0.3em] text-muted-foreground">
-                Tháng Ba · Ngày 01
-              </div>
-              <div className="my-6 h-px bg-border" />
-              <blockquote className="font-display text-2xl leading-snug">
-                “Giai cấp công nhân là đại diện cho lực lượng sản xuất tiên
-                tiến nhất của thời đại.”
-              </blockquote>
-              <div className="mt-6 text-sm text-muted-foreground">
-                — Bài học mở đầu Chuỗi <em>Sứ mệnh Công nhân</em>
-              </div>
-            </div>
+            <MonthCalendar />
           </aside>
         </div>
       </section>
