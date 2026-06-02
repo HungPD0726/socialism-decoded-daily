@@ -1,185 +1,202 @@
 import { useEffect, useMemo, useState } from "react";
-
-type Lesson = { lesson: string; reflect: string };
-
-// Sample lessons – có thể mở rộng cho đủ 31 ngày
-const LESSONS: Record<number, Lesson> = {
-  1: {
-    lesson:
-      "Giai cấp công nhân không chỉ là người làm việc trong nhà máy — họ là đại diện cho lực lượng sản xuất tiên tiến nhất của thời đại.",
-    reflect:
-      "Lập trình viên, kỹ sư công nghệ cao hôm nay chính là một bộ phận tiên tiến của giai cấp công nhân hiện đại.",
-  },
-  2: {
-    lesson:
-      "Sứ mệnh của công nhân không phải là thay thế một kẻ bóc lột này bằng một kẻ bóc lột khác, mà là xóa bỏ hoàn toàn chế độ bóc lột.",
-    reflect:
-      "Mục tiêu cuối cùng là một xã hội công bằng, nơi mọi lao động đều được tôn trọng giá trị đích thực.",
-  },
-  3: {
-    lesson:
-      "Lao động là nguồn gốc của mọi của cải và mọi văn hoá — không có lao động, không có lịch sử loài người.",
-    reflect: "Mỗi dòng code, mỗi đường cày, mỗi giờ giảng dạy đều đang viết tiếp lịch sử ấy.",
-  },
-  4: {
-    lesson:
-      "Sản xuất ra của cải vật chất là cơ sở của sự tồn tại và phát triển của xã hội loài người.",
-    reflect: "Hôm nay bạn đã tạo ra giá trị gì — vật chất hay tinh thần?",
-  },
-  5: {
-    lesson: "Tự do của mỗi người là điều kiện cho sự phát triển tự do của tất cả mọi người.",
-    reflect: "Tự do không phải là làm điều mình muốn, mà là cùng nhau tạo ra điều kiện cho nhau.",
-  },
-  7: {
-    lesson:
-      "Cách mạng công nghiệp lần thứ tư mở rộng nội hàm khái niệm “giai cấp công nhân” chứ không xoá bỏ nó.",
-    reflect: "Một kỹ sư AI và một thợ hàn cùng đứng trên một dòng chảy lịch sử.",
-  },
-  10: {
-    lesson:
-      "Giai cấp công nhân chỉ hoàn thành sứ mệnh khi tự ý thức được vai trò lịch sử của mình.",
-    reflect: "Học – là bước đầu tiên của giải phóng.",
-  },
-  14: {
-    lesson: "Đoàn kết là vũ khí mạnh nhất của những người lao động.",
-    reflect: "Một mình đi nhanh, cùng nhau đi xa.",
-  },
-  20: {
-    lesson:
-      "Khoa học kỹ thuật càng phát triển, vai trò của tri thức trong giai cấp công nhân càng lớn.",
-    reflect: "Đầu tư cho việc học chính là đầu tư cho cách mạng cá nhân.",
-  },
-  25: {
-    lesson:
-      "Lợi ích của giai cấp công nhân thống nhất với lợi ích của tuyệt đại đa số nhân dân lao động.",
-    reflect: "Khi bạn đứng về phía số đông, bạn đứng về phía lịch sử.",
-  },
-  31: {
-    lesson: "Kết chuỗi: Sứ mệnh không kết thúc — nó được kế thừa qua từng thế hệ.",
-    reflect: "Tháng sau ta bước vào chương tiếp theo. Bạn đã sẵn sàng?",
-  },
-};
+import { getDailyQuote, getQuotesForMonth } from "@/data/dailyQuotes";
 
 const WEEKDAYS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
-const DAYS_IN_MONTH = 31;
-// 01/03/2026 rơi vào Chủ nhật → offset = 6 (chỉ số CN trong mảng T2..CN)
-const FIRST_DAY_OFFSET = 6;
-const TODAY = 1; // ngày 01 là "hôm nay" của hành trình
+const MONTH_NAMES = [
+  "Tháng Một",
+  "Tháng Hai",
+  "Tháng Ba",
+  "Tháng Tư",
+  "Tháng Năm",
+  "Tháng Sáu",
+  "Tháng Bảy",
+  "Tháng Tám",
+  "Tháng Chín",
+  "Tháng Mười",
+  "Tháng Mười Một",
+  "Tháng Mười Hai",
+];
 
-const STORAGE_KEY = "365-favorites-thang-3";
+const FAVORITES_KEY = "365-favorite-quotes";
+const LEGACY_STORAGE_KEY = "365-favorites-thang-3";
+
+function getFavoriteKey(month: number, day: number) {
+  return `${month}-${day}`;
+}
+
+function parseFavoriteKey(key: string) {
+  const [month, day] = key.split("-").map(Number);
+  if (!Number.isInteger(month) || !Number.isInteger(day)) return null;
+  return { month, day };
+}
 
 export function MonthCalendar() {
-  const [favorites, setFavorites] = useState<number[]>([]);
-  const [active, setActive] = useState<number>(TODAY);
+  const today = useMemo(() => new Date(), []);
+  const currentMonth = today.getMonth() + 1;
+  const currentYear = today.getFullYear();
+  const todayDay = today.getDate();
+
+  const [favorites, setFavorites] = useState<string[]>([]);
+  const [active, setActive] = useState(todayDay);
 
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) setFavorites(JSON.parse(raw));
-    } catch {}
+      const raw = localStorage.getItem(FAVORITES_KEY);
+      if (raw) {
+        setFavorites(JSON.parse(raw));
+        return;
+      }
+
+      const legacyRaw = localStorage.getItem(LEGACY_STORAGE_KEY);
+      if (!legacyRaw) return;
+
+      const legacyDays = JSON.parse(legacyRaw);
+      if (!Array.isArray(legacyDays)) return;
+
+      const migrated = legacyDays
+        .filter((day) => Number.isInteger(day))
+        .map((day) => getFavoriteKey(3, day));
+
+      setFavorites(migrated);
+      localStorage.setItem(FAVORITES_KEY, JSON.stringify(migrated));
+    } catch (error) {
+      console.warn("Could not load favorite quotes", error);
+    }
   }, []);
 
-  const toggleFavorite = (day: number) => {
+  const monthQuotes = useMemo(() => getQuotesForMonth(currentMonth), [currentMonth]);
+  const quotesByDay = useMemo(
+    () => new Map(monthQuotes.map((quote) => [quote.day, quote])),
+    [monthQuotes],
+  );
+
+  const daysInMonth = useMemo(
+    () => new Date(currentYear, currentMonth, 0).getDate(),
+    [currentMonth, currentYear],
+  );
+
+  const cells = useMemo(() => {
+    const firstDayOfMonth = new Date(currentYear, currentMonth - 1, 1);
+    const firstDayOffset = (firstDayOfMonth.getDay() + 6) % 7;
+    const days: (number | null)[] = [];
+
+    for (let i = 0; i < firstDayOffset; i += 1) days.push(null);
+    for (let day = 1; day <= daysInMonth; day += 1) days.push(day);
+    while (days.length % 7 !== 0) days.push(null);
+
+    return days;
+  }, [currentMonth, currentYear, daysInMonth]);
+
+  const activeQuote = getDailyQuote(currentMonth, active);
+  const currentMonthFavorites = favorites
+    .map(parseFavoriteKey)
+    .filter((favorite): favorite is { month: number; day: number } => {
+      return Boolean(favorite) && favorite.month === currentMonth;
+    })
+    .sort((a, b) => a.day - b.day);
+
+  const toggleFavorite = (month: number, day: number) => {
+    const key = getFavoriteKey(month, day);
+
     setFavorites((prev) => {
-      const next = prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day];
+      const next = prev.includes(key)
+        ? prev.filter((favorite) => favorite !== key)
+        : [...prev, key];
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-      } catch {}
+        localStorage.setItem(FAVORITES_KEY, JSON.stringify(next));
+      } catch (error) {
+        console.warn("Could not save favorite quotes", error);
+      }
       return next;
     });
   };
 
-  const cells = useMemo(() => {
-    const arr: (number | null)[] = [];
-    for (let i = 0; i < FIRST_DAY_OFFSET; i++) arr.push(null);
-    for (let d = 1; d <= DAYS_IN_MONTH; d++) arr.push(d);
-    while (arr.length % 7 !== 0) arr.push(null);
-    return arr;
-  }, []);
-
-  const activeLesson = LESSONS[active];
-
   return (
     <div className="group/cal relative rounded-sm border border-border bg-card p-6 shadow-[8px_8px_0_0_oklch(0.46_0.19_27)] transition">
       <div className="absolute -top-3 left-6 bg-card px-3 text-xs uppercase tracking-[0.25em] text-primary">
-        Lịch tháng 3
+        Lịch {MONTH_NAMES[currentMonth - 1].toLowerCase()}
       </div>
 
-      <div className="flex items-baseline justify-between">
+      <div className="flex items-baseline justify-between gap-4">
         <div>
           <div className="font-display text-5xl leading-none text-primary">
             {String(active).padStart(2, "0")}
           </div>
           <div className="mt-1 text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
-            Tháng Ba · 2026
+            {MONTH_NAMES[currentMonth - 1]} · {currentYear}
           </div>
         </div>
         <div className="text-right text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
-          Di chuột để xem
+          365 ngày
           <br />
-          <span className="text-primary">Nháy đúp ★ để lưu</span>
+          <span className="text-primary">Một ý tưởng</span>
         </div>
       </div>
 
       <div className="my-5 h-px bg-border" />
 
-      {/* Compact preview – mặc định khi không hover */}
       <div className="transition-all duration-300 group-hover/cal:hidden">
-        {activeLesson ? (
+        {activeQuote ? (
           <>
             <blockquote className="font-display text-xl leading-snug">
-              “{activeLesson.lesson}”
+              “{activeQuote.quote}”
             </blockquote>
-            <p className="mt-4 text-sm text-muted-foreground">{activeLesson.reflect}</p>
+            <p className="mt-4 text-sm text-muted-foreground">
+              {activeQuote.author} · {activeQuote.context}
+            </p>
           </>
         ) : (
-          <p className="text-sm text-muted-foreground">Chưa có bài học cho ngày này.</p>
+          <p className="text-sm text-muted-foreground">Nội dung ngày này đang được cập nhật.</p>
         )}
         <div className="mt-5 text-xs uppercase tracking-[0.3em] text-muted-foreground">
-          ⌂ Di chuột vào để mở lịch cả tháng →
+          {monthQuotes.length} nội dung trong tháng này
         </div>
       </div>
 
-      {/* Full calendar – hiện khi hover */}
       <div className="hidden animate-fade-in group-hover/cal:block">
         <div className="mb-2 grid grid-cols-7 gap-1 text-center text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-          {WEEKDAYS.map((d) => (
-            <div key={d}>{d}</div>
+          {WEEKDAYS.map((day) => (
+            <div key={day}>{day}</div>
           ))}
         </div>
 
         <div className="grid grid-cols-7 gap-1">
-          {cells.map((day, i) => {
-            if (day === null) return <div key={i} className="aspect-square" />;
-            const hasLesson = !!LESSONS[day];
-            const isFav = favorites.includes(day);
-            const isToday = day === TODAY;
+          {cells.map((day, index) => {
+            if (day === null) return <div key={index} className="aspect-square" />;
+
+            const quote = quotesByDay.get(day) ?? getDailyQuote(currentMonth, day);
+            const isFav = quote
+              ? favorites.includes(getFavoriteKey(quote.month, quote.day))
+              : false;
+            const isToday = day === todayDay;
             const isActive = day === active;
+
             return (
               <button
-                key={i}
+                key={index}
                 type="button"
-                onMouseEnter={() => hasLesson && setActive(day)}
-                onFocus={() => hasLesson && setActive(day)}
-                onClick={() => hasLesson && setActive(day)}
-                onDoubleClick={(e) => {
-                  e.preventDefault();
-                  if (hasLesson) toggleFavorite(day);
+                onMouseEnter={() => quote && setActive(day)}
+                onFocus={() => quote && setActive(day)}
+                onClick={() => quote && setActive(day)}
+                onDoubleClick={(event) => {
+                  event.preventDefault();
+                  if (quote) toggleFavorite(quote.month, quote.day);
                 }}
                 className={[
                   "group/day relative aspect-square rounded-sm border text-xs font-medium transition",
                   isActive
                     ? "border-primary bg-primary text-primary-foreground"
                     : "border-border bg-background hover:border-primary",
-                  !hasLesson && "opacity-40",
+                  !quote && "opacity-40",
                   isToday && !isActive && "ring-1 ring-primary/60",
                 ]
                   .filter(Boolean)
                   .join(" ")}
-                aria-label={`Ngày ${day}${hasLesson ? "" : " — chưa có bài"}`}
+                aria-label={`Ngày ${day}/${currentMonth}${quote ? "" : " chưa có nội dung"}`}
+                title={quote ? `${quote.author}: ${quote.context}` : "Chưa có nội dung"}
               >
                 <span>{day}</span>
-                {hasLesson && (
+                {quote && (
                   <Star
                     className={[
                       "absolute right-0.5 top-0.5 h-2.5 w-2.5 transition",
@@ -198,49 +215,53 @@ export function MonthCalendar() {
 
         <div className="mt-5 min-h-[110px] border-t border-border pt-4">
           <div className="mb-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-primary">
-            Ngày {String(active).padStart(2, "0")} / 03
+            Ngày {String(active).padStart(2, "0")} / {String(currentMonth).padStart(2, "0")}
           </div>
-          {activeLesson ? (
+          {activeQuote ? (
             <>
-              <p className="font-display text-base leading-snug">“{activeLesson.lesson}”</p>
-              <p className="mt-2 text-xs text-muted-foreground">{activeLesson.reflect}</p>
+              <p className="font-display text-base leading-snug">“{activeQuote.quote}”</p>
+              <p className="mt-2 text-xs text-muted-foreground">
+                {activeQuote.author} · {activeQuote.context}
+              </p>
             </>
           ) : (
-            <p className="text-xs text-muted-foreground">Bài học sẽ được cập nhật.</p>
+            <p className="text-xs text-muted-foreground">Nội dung ngày này đang được cập nhật.</p>
           )}
         </div>
       </div>
 
-      {/* Favorites */}
       <div className="mt-5 border-t border-border pt-4">
         <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
           <span>Tâm đắc đã lưu</span>
-          <span className="text-primary">{favorites.length} bài</span>
+          <span className="text-primary">{currentMonthFavorites.length} bài</span>
         </div>
-        {favorites.length > 0 ? (
+        {currentMonthFavorites.length > 0 ? (
           <div className="mt-3 flex flex-wrap gap-1.5">
-            {favorites
-              .slice()
-              .sort((a, b) => a - b)
-              .map((d) => (
+            {currentMonthFavorites.map(({ month, day }) => {
+              const quote = getDailyQuote(month, day);
+              if (!quote) return null;
+
+              return (
                 <button
-                  key={d}
-                  onClick={() => setActive(d)}
-                  onDoubleClick={(e) => {
-                    e.preventDefault();
-                    toggleFavorite(d);
+                  key={getFavoriteKey(month, day)}
+                  type="button"
+                  onClick={() => setActive(day)}
+                  onDoubleClick={(event) => {
+                    event.preventDefault();
+                    toggleFavorite(quote.month, quote.day);
                   }}
                   className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-medium text-primary transition hover:bg-primary hover:text-primary-foreground"
-                  title="Nháy đúp để bỏ lưu"
+                  title={`${quote.author}: ${quote.context}`}
                 >
                   <Star className="h-2.5 w-2.5" />
-                  {String(d).padStart(2, "0")}/03
+                  {String(day).padStart(2, "0")}/{String(month).padStart(2, "0")}
                 </button>
-              ))}
+              );
+            })}
           </div>
         ) : (
           <p className="mt-2 text-xs italic text-muted-foreground">
-            Mở lịch, nháy đúp ngôi sao ★ trên một ngày để lưu bài học bạn tâm đắc.
+            Chưa có nội dung tâm đắc trong tháng này.
           </p>
         )}
       </div>
