@@ -1,8 +1,18 @@
-import { useMemo, useState, type MouseEvent } from "react";
-import { ChevronDown } from "lucide-react";
+import { useEffect, useMemo, useState, type MouseEvent } from "react";
+import { ChevronDown, Info } from "lucide-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MarxLinePortrait } from "@/components/MarxLinePortrait";
 import { MonthCalendar } from "@/components/MonthCalendar";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { chapters as months } from "@/data/chapters";
 import {
   dailyQuotes,
@@ -48,6 +58,18 @@ const monthNames = [
 
 const dayLabels = ["Hôm nay", "Ngày mai", "Ngày kế tiếp"];
 
+const groupMembers = [
+  "Trịnh Gia Phúc",
+  "Nguyễn Hoàng Long",
+  "Vũ Quốc Khánh",
+  "Phạm Vũ Anh Hưng",
+  "Đinh Duy Trọng",
+  "Lê Ánh Ngọc",
+  "Nguyễn Việt Anh",
+  "Ngô Yến Dương",
+  "Phạm Duy Hưng",
+];
+
 function formatQuoteDate(quote: DailyQuote) {
   return `${String(quote.day).padStart(2, "0")} / ${String(quote.month).padStart(2, "0")}`;
 }
@@ -66,6 +88,11 @@ function Home() {
   const remainingLessons = Math.max(0, dailyQuotes.length - getDayOfYear(today));
   const [chapterMenuOpen, setChapterMenuOpen] = useState(false);
   const [activeChapter, setActiveChapter] = useState<number | null>(null);
+  const [projectDialogOpen, setProjectDialogOpen] = useState(false);
+
+  useEffect(() => {
+    setProjectDialogOpen(true);
+  }, []);
 
   const scrollToSection = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -89,6 +116,8 @@ function Home() {
 
   return (
     <div className="min-h-screen bg-background text-foreground paper-grain">
+      <ProjectIntroDialog open={projectDialogOpen} onOpenChange={setProjectDialogOpen} />
+
       {/* Top banner */}
       <header className="sticky top-0 z-50 border-b-2 border-primary/80 bg-background/95 backdrop-blur">
         <div className="banner-stripes h-1.5" />
@@ -415,13 +444,34 @@ function Home() {
               Mỗi ngày một bài học ngắn (3 phút đọc), một dòng suy ngẫm để mang theo. Không giáo
               điều, không khẩu hiệu — chỉ là lý luận gặp đời sống.
             </p>
-            <a
-              href="#ngay"
-              onClick={(event) => handleSectionLink(event, "ngay")}
-              className="inline-block border-b-2 border-primary pb-1 text-sm font-medium text-primary"
-            >
-              Bắt đầu từ Ngày 01 →
-            </a>
+            <div className="border-l-2 border-primary pl-5">
+              <div className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">
+                Group 4
+              </div>
+              <ul className="mt-3 grid gap-2 text-sm text-foreground sm:grid-cols-2">
+                {groupMembers.map((member) => (
+                  <li key={member}>{member}</li>
+                ))}
+              </ul>
+            </div>
+            <div className="flex flex-wrap items-center gap-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setProjectDialogOpen(true)}
+                className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+              >
+                <Info aria-hidden />
+                Xem giới thiệu dự án
+              </Button>
+              <a
+                href="#ngay"
+                onClick={(event) => handleSectionLink(event, "ngay")}
+                className="inline-block border-b-2 border-primary pb-1 text-sm font-medium text-primary"
+              >
+                Bắt đầu từ Ngày 01 →
+              </a>
+            </div>
           </div>
         </div>
       </section>
@@ -434,6 +484,53 @@ function Home() {
         <div className="banner-stripes h-1.5" />
       </footer>
     </div>
+  );
+}
+
+function ProjectIntroDialog({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto border-2 border-primary/30 p-0">
+        <div className="banner-stripes h-1.5" />
+        <div className="space-y-6 px-6 pb-6 pt-8 sm:px-8">
+          <DialogHeader className="text-left">
+            <div className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">
+              Group 4
+            </div>
+            <DialogTitle className="font-display text-3xl leading-tight md:text-4xl">
+              Giới thiệu dự án 365 Ngày
+            </DialogTitle>
+            <DialogDescription className="text-base leading-relaxed">
+              365 Ngày là dự án đọc và suy ngẫm về Chủ nghĩa Xã hội Khoa học, giúp người học tiếp
+              cận từng chủ đề bằng những nội dung ngắn gọn, đều đặn và gần với đời sống.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="border-l-2 border-primary pl-5">
+            <div className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">
+              Thành viên
+            </div>
+            <ul className="mt-3 grid gap-2 text-sm text-foreground sm:grid-cols-2">
+              {groupMembers.map((member) => (
+                <li key={member}>{member}</li>
+              ))}
+            </ul>
+          </div>
+
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button type="button">Đóng</Button>
+            </DialogClose>
+          </DialogFooter>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 
