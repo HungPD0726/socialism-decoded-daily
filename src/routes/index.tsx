@@ -1,6 +1,9 @@
-import { useMemo } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { useMemo, useState, type MouseEvent } from "react";
+import { ChevronDown } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { MarxLinePortrait } from "@/components/MarxLinePortrait";
 import { MonthCalendar } from "@/components/MonthCalendar";
+import { chapters as months } from "@/data/chapters";
 import {
   dailyQuotes,
   getAdjacentDailyQuotes,
@@ -27,21 +30,6 @@ export const Route = createFileRoute("/")({
   }),
   component: Home,
 });
-
-const months = [
-  { n: 1, title: "Sự ra đời", sub: "Bối cảnh lịch sử, vai trò của Mác và Ăng-ghen" },
-  { n: 2, title: "Tuyên ngôn", sub: "Cuốn sách đã thay đổi thế giới" },
-  { n: 3, title: "Sứ mệnh Công nhân", sub: "Truyền thống & Hiện đại 4.0" },
-  { n: 4, title: "Sứ mệnh Công nhân II", sub: "Giai cấp tiên tiến trong thời đại số" },
-  { n: 5, title: "Quá độ lên CNXH", sub: "Lý luận nền tảng" },
-  { n: 6, title: "Mô hình Việt Nam", sub: "Con đường đặc thù của một dân tộc" },
-  { n: 7, title: "Dân chủ XHCN", sub: "Nhà nước pháp quyền của nhân dân" },
-  { n: 8, title: "Cơ cấu xã hội", sub: "Giai cấp trong thời kỳ quá độ" },
-  { n: 9, title: "Vấn đề Dân tộc", sub: "Đoàn kết trong đa dạng" },
-  { n: 10, title: "Tôn giáo", sub: "Tự do tín ngưỡng & đời sống tinh thần" },
-  { n: 11, title: "Gia đình", sub: "Bình đẳng giới trong xã hội hiện đại" },
-  { n: 12, title: "Nhìn về tương lai", sub: "Dự báo kinh điển & thực tế hôm nay" },
-];
 
 const monthNames = [
   "tháng 1",
@@ -76,13 +64,35 @@ function Home() {
   const dailyLessons = getAdjacentDailyQuotes(today, 3);
   const currentMonth = months[today.getMonth()];
   const remainingLessons = Math.max(0, dailyQuotes.length - getDayOfYear(today));
+  const [chapterMenuOpen, setChapterMenuOpen] = useState(false);
+  const [activeChapter, setActiveChapter] = useState<number | null>(null);
+
+  const scrollToSection = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const handleSectionLink = (event: MouseEvent<HTMLAnchorElement>, id: string) => {
+    event.preventDefault();
+    setChapterMenuOpen(false);
+    scrollToSection(id);
+  };
+
+  const handleChapterSelect = (chapter: number) => {
+    setChapterMenuOpen(false);
+    setActiveChapter(chapter);
+    scrollToSection(`chuong-${chapter}`);
+
+    window.setTimeout(() => {
+      setActiveChapter((currentChapter) => (currentChapter === chapter ? null : currentChapter));
+    }, 1_400);
+  };
 
   return (
     <div className="min-h-screen bg-background text-foreground paper-grain">
       {/* Top banner */}
-      <header className="border-b-2 border-primary/80">
+      <header className="sticky top-0 z-50 border-b-2 border-primary/80 bg-background/95 backdrop-blur">
         <div className="banner-stripes h-1.5" />
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-4 gap-y-3 px-6 py-4">
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground">
               <StarIcon />
@@ -94,32 +104,117 @@ function Home() {
               <div className="font-semibold">365 Ngày</div>
             </div>
           </div>
-          <nav className="hidden gap-8 text-sm font-medium md:flex">
-            <a href="#thang" className="hover:text-primary">
-              12 Tháng
-            </a>
-            <a href="#ngay" className="hover:text-primary">
+          <nav className="order-3 flex w-full items-center gap-5 overflow-x-auto border-t border-border pt-3 text-xs font-medium md:order-2 md:w-auto md:gap-8 md:border-t-0 md:pt-0 md:text-sm">
+            <button
+              type="button"
+              onClick={() => setChapterMenuOpen((isOpen) => !isOpen)}
+              className={[
+                "inline-flex shrink-0 items-center gap-1.5 rounded-sm py-1 transition hover:text-primary focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background",
+                chapterMenuOpen && "text-primary",
+              ]
+                .filter(Boolean)
+                .join(" ")}
+              aria-expanded={chapterMenuOpen}
+              aria-controls="chapter-menu"
+            >
+              Chương
+              <ChevronDown
+                className={["h-4 w-4 transition-transform", chapterMenuOpen && "rotate-180"]
+                  .filter(Boolean)
+                  .join(" ")}
+                aria-hidden
+              />
+            </button>
+            <a
+              href="#ngay"
+              onClick={(event) => handleSectionLink(event, "ngay")}
+              className="shrink-0 py-1 transition hover:text-primary"
+            >
               Bài học hôm nay
             </a>
-            <a href="#suyngam" className="hover:text-primary">
+            <a
+              href="#suyngam"
+              onClick={(event) => handleSectionLink(event, "suyngam")}
+              className="shrink-0 py-1 transition hover:text-primary"
+            >
               Suy ngẫm
             </a>
-            <a href="#vesach" className="hover:text-primary">
+            <a
+              href="#vesach"
+              onClick={(event) => handleSectionLink(event, "vesach")}
+              className="shrink-0 py-1 transition hover:text-primary"
+            >
               Về dự án
             </a>
           </nav>
           <a
             href="#ngay"
-            className="rounded-full bg-primary px-5 py-2 text-sm font-medium text-primary-foreground transition hover:bg-primary/90"
+            onClick={(event) => handleSectionLink(event, "ngay")}
+            className="order-2 shrink-0 rounded-full bg-primary px-5 py-2 text-sm font-medium text-primary-foreground transition hover:bg-primary/90 md:order-3"
           >
             Bắt đầu đọc
           </a>
         </div>
+        <div
+          id="chapter-menu"
+          className={[
+            "chapter-menu-shell border-t border-border bg-card/95 shadow-lg backdrop-blur",
+            chapterMenuOpen ? "chapter-menu-open" : "chapter-menu-closed",
+          ].join(" ")}
+          aria-hidden={!chapterMenuOpen}
+        >
+          <div className="mx-auto max-w-7xl px-6 py-5">
+            <div className="grid gap-px overflow-hidden rounded-sm border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
+              {months.map((m) => {
+                const menuItemClass =
+                  "group/menu flex min-h-28 flex-col items-start bg-background p-4 text-left transition hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-card";
+                const menuItemContent = (
+                  <>
+                    <span className="font-display text-2xl leading-none text-primary transition group-hover/menu:text-primary-foreground group-focus/menu:text-primary-foreground">
+                      {String(m.n).padStart(2, "0")}
+                    </span>
+                    <span className="mt-3 font-display text-lg leading-tight">{m.title}</span>
+                    <span className="mt-1 text-xs leading-relaxed text-muted-foreground transition group-hover/menu:text-primary-foreground/75 group-focus/menu:text-primary-foreground/75">
+                      {m.sub}
+                    </span>
+                  </>
+                );
+
+                return m.isPublished ? (
+                  <Link
+                    key={`chapter-menu-${m.n}`}
+                    to="/chuong/$chapter"
+                    params={{ chapter: String(m.n) }}
+                    tabIndex={chapterMenuOpen ? 0 : -1}
+                    onClick={() => setChapterMenuOpen(false)}
+                    className={menuItemClass}
+                  >
+                    {menuItemContent}
+                  </Link>
+                ) : (
+                  <button
+                    key={`chapter-menu-${m.n}`}
+                    type="button"
+                    tabIndex={chapterMenuOpen ? 0 : -1}
+                    onClick={() => handleChapterSelect(m.n)}
+                    className={menuItemClass}
+                  >
+                    {menuItemContent}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
       </header>
 
       {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="mx-auto grid max-w-7xl gap-12 px-6 py-20 md:grid-cols-12 md:py-32">
+      <section className="hero-shell relative isolate overflow-hidden">
+        <figure className="marx-hero-portrait" aria-hidden>
+          <MarxLinePortrait />
+        </figure>
+
+        <div className="relative z-10 mx-auto grid max-w-7xl gap-12 px-6 py-20 md:grid-cols-12 md:py-32">
           <div className="md:col-span-7">
             <div className="mb-6 flex items-center gap-3 text-xs font-medium uppercase tracking-[0.3em] text-primary">
               <span className="h-px w-10 bg-primary" />
@@ -139,11 +234,16 @@ function Home() {
             <div className="mt-10 flex flex-wrap items-center gap-4">
               <a
                 href="#thang"
+                onClick={(event) => handleSectionLink(event, "thang")}
                 className="rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition hover:bg-foreground/85"
               >
                 Khám phá 12 tháng →
               </a>
-              <a href="#ngay" className="text-sm font-medium underline-offset-4 hover:underline">
+              <a
+                href="#ngay"
+                onClick={(event) => handleSectionLink(event, "ngay")}
+                className="text-sm font-medium underline-offset-4 hover:underline"
+              >
                 Đọc bài học hôm nay
               </a>
             </div>
@@ -161,7 +261,7 @@ function Home() {
       </div>
 
       {/* 12 months */}
-      <section id="thang" className="mx-auto max-w-7xl px-6 py-24">
+      <section id="thang" className="mx-auto max-w-7xl scroll-mt-28 px-6 py-24">
         <div className="mb-14 flex items-end justify-between">
           <div>
             <div className="mb-3 text-xs font-medium uppercase tracking-[0.3em] text-primary">
@@ -178,7 +278,13 @@ function Home() {
           {months.map((m) => (
             <article
               key={m.n}
-              className="group relative bg-card p-8 transition hover:bg-primary hover:text-primary-foreground"
+              id={`chuong-${m.n}`}
+              className={[
+                "group relative scroll-mt-32 bg-card p-8 transition hover:bg-primary hover:text-primary-foreground",
+                activeChapter === m.n && "chapter-card-selected",
+              ]
+                .filter(Boolean)
+                .join(" ")}
             >
               <div className="flex items-baseline justify-between">
                 <span className="font-display text-5xl text-primary transition group-hover:text-primary-foreground">
@@ -192,16 +298,26 @@ function Home() {
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground transition group-hover:text-primary-foreground/80">
                 {m.sub}
               </p>
-              <div className="mt-8 text-xs font-medium uppercase tracking-[0.25em] opacity-0 transition group-hover:opacity-100">
-                Đọc chương →
-              </div>
+              {m.isPublished ? (
+                <Link
+                  to="/chuong/$chapter"
+                  params={{ chapter: String(m.n) }}
+                  className="mt-8 inline-flex text-xs font-medium uppercase tracking-[0.25em] opacity-0 transition group-hover:opacity-100"
+                >
+                  Đọc chương →
+                </Link>
+              ) : (
+                <div className="mt-8 text-xs font-medium uppercase tracking-[0.25em] opacity-0 transition group-hover:opacity-100">
+                  Sắp có
+                </div>
+              )}
             </article>
           ))}
         </div>
       </section>
 
       {/* Daily series */}
-      <section id="ngay" className="bg-foreground text-background">
+      <section id="ngay" className="scroll-mt-28 bg-foreground text-background">
         <div className="mx-auto max-w-7xl px-6 py-24">
           <div className="mb-14 max-w-2xl">
             <div className="mb-3 text-xs font-medium uppercase tracking-[0.3em] text-accent">
@@ -249,7 +365,11 @@ function Home() {
 
           <div className="mt-12 flex items-center justify-between border-t border-background/15 pt-8 text-sm text-background/60">
             <span>Còn {remainingLessons} nội dung đang chờ bạn trong năm nay.</span>
-            <a href="#thang" className="text-accent underline-offset-4 hover:underline">
+            <a
+              href="#thang"
+              onClick={(event) => handleSectionLink(event, "thang")}
+              className="text-accent underline-offset-4 hover:underline"
+            >
               Xem toàn bộ chuỗi →
             </a>
           </div>
@@ -257,7 +377,7 @@ function Home() {
       </section>
 
       {/* Quote section */}
-      <section id="suyngam" className="mx-auto max-w-5xl px-6 py-32 text-center">
+      <section id="suyngam" className="mx-auto max-w-5xl scroll-mt-28 px-6 py-32 text-center">
         <StarIcon className="mx-auto h-6 w-6 text-primary" />
         {todaysQuote ? (
           <>
@@ -274,7 +394,7 @@ function Home() {
       </section>
 
       {/* About */}
-      <section id="vesach" className="border-t border-border bg-secondary/40">
+      <section id="vesach" className="scroll-mt-28 border-t border-border bg-secondary/40">
         <div className="mx-auto grid max-w-7xl gap-12 px-6 py-24 md:grid-cols-2">
           <div>
             <div className="mb-3 text-xs font-medium uppercase tracking-[0.3em] text-primary">
@@ -297,6 +417,7 @@ function Home() {
             </p>
             <a
               href="#ngay"
+              onClick={(event) => handleSectionLink(event, "ngay")}
               className="inline-block border-b-2 border-primary pb-1 text-sm font-medium text-primary"
             >
               Bắt đầu từ Ngày 01 →

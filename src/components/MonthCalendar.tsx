@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useEffect, useMemo, useRef, useState, type TouchEvent } from "react";
 import { getDailyQuote, getQuotesForMonth } from "@/data/dailyQuotes";
 
 const WEEKDAYS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
@@ -30,14 +31,25 @@ function parseFavoriteKey(key: string) {
   return { month, day };
 }
 
+function getDaysInMonth(year: number, month: number) {
+  return new Date(year, month, 0).getDate();
+}
+
 export function MonthCalendar() {
   const today = useMemo(() => new Date(), []);
-  const currentMonth = today.getMonth() + 1;
-  const currentYear = today.getFullYear();
+  const todayMonth = today.getMonth() + 1;
+  const todayYear = today.getFullYear();
   const todayDay = today.getDate();
 
   const [favorites, setFavorites] = useState<string[]>([]);
+  const [visibleDate, setVisibleDate] = useState(
+    () => new Date(today.getFullYear(), today.getMonth(), 1),
+  );
   const [active, setActive] = useState(todayDay);
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+
+  const visibleMonth = visibleDate.getMonth() + 1;
+  const visibleYear = visibleDate.getFullYear();
 
   useEffect(() => {
     try {
@@ -64,19 +76,19 @@ export function MonthCalendar() {
     }
   }, []);
 
-  const monthQuotes = useMemo(() => getQuotesForMonth(currentMonth), [currentMonth]);
+  const monthQuotes = useMemo(() => getQuotesForMonth(visibleMonth), [visibleMonth]);
   const quotesByDay = useMemo(
     () => new Map(monthQuotes.map((quote) => [quote.day, quote])),
     [monthQuotes],
   );
 
   const daysInMonth = useMemo(
-    () => new Date(currentYear, currentMonth, 0).getDate(),
-    [currentMonth, currentYear],
+    () => getDaysInMonth(visibleYear, visibleMonth),
+    [visibleMonth, visibleYear],
   );
 
   const cells = useMemo(() => {
-    const firstDayOfMonth = new Date(currentYear, currentMonth - 1, 1);
+    const firstDayOfMonth = new Date(visibleYear, visibleMonth - 1, 1);
     const firstDayOffset = (firstDayOfMonth.getDay() + 6) % 7;
     const days: (number | null)[] = [];
 
@@ -85,15 +97,47 @@ export function MonthCalendar() {
     while (days.length % 7 !== 0) days.push(null);
 
     return days;
-  }, [currentMonth, currentYear, daysInMonth]);
+  }, [visibleMonth, visibleYear, daysInMonth]);
 
-  const activeQuote = getDailyQuote(currentMonth, active);
-  const currentMonthFavorites = favorites
+  const activeQuote = getDailyQuote(visibleMonth, active);
+  const visibleMonthFavorites = favorites
     .map(parseFavoriteKey)
     .filter((favorite): favorite is { month: number; day: number } => {
-      return Boolean(favorite) && favorite.month === currentMonth;
+      return Boolean(favorite) && favorite.month === visibleMonth;
     })
     .sort((a, b) => a.day - b.day);
+
+  const changeVisibleMonth = (offset: number) => {
+    const nextDate = new Date(visibleYear, visibleMonth - 1 + offset, 1);
+    const nextMonth = nextDate.getMonth() + 1;
+    const nextYear = nextDate.getFullYear();
+
+    setVisibleDate(nextDate);
+    setActive((currentActive) => Math.min(currentActive, getDaysInMonth(nextYear, nextMonth)));
+  };
+
+  const handleTouchStart = (event: TouchEvent<HTMLDivElement>) => {
+    const touch = event.touches[0];
+    if (!touch) return;
+
+    touchStartRef.current = { x: touch.clientX, y: touch.clientY };
+  };
+
+  const handleTouchEnd = (event: TouchEvent<HTMLDivElement>) => {
+    const start = touchStartRef.current;
+    const touch = event.changedTouches[0];
+    touchStartRef.current = null;
+
+    if (!start || !touch) return;
+
+    const deltaX = touch.clientX - start.x;
+    const deltaY = touch.clientY - start.y;
+    const isHorizontalSwipe = Math.abs(deltaX) >= 50 && Math.abs(deltaX) > Math.abs(deltaY) * 1.2;
+
+    if (!isHorizontalSwipe) return;
+
+    changeVisibleMonth(deltaX < 0 ? 1 : -1);
+  };
 
   const toggleFavorite = (month: number, day: number) => {
     const key = getFavoriteKey(month, day);
@@ -112,24 +156,50 @@ export function MonthCalendar() {
   };
 
   return (
-    <div className="group/cal relative rounded-sm border border-border bg-card p-6 shadow-[8px_8px_0_0_oklch(0.46_0.19_27)] transition">
+    <div
+      className="group/cal relative rounded-sm border border-border bg-card p-6 shadow-[8px_8px_0_0_oklch(0.46_0.19_27)] transition"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
       <div className="absolute -top-3 left-6 bg-card px-3 text-xs uppercase tracking-[0.25em] text-primary">
-        Lịch {MONTH_NAMES[currentMonth - 1].toLowerCase()}
+        Lịch {MONTH_NAMES[visibleMonth - 1].toLowerCase()}
       </div>
 
-      <div className="flex items-baseline justify-between gap-4">
+      <div className="flex items-start justify-between gap-4">
         <div>
           <div className="font-display text-5xl leading-none text-primary">
             {String(active).padStart(2, "0")}
           </div>
           <div className="mt-1 text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
-            {MONTH_NAMES[currentMonth - 1]} · {currentYear}
+            {MONTH_NAMES[visibleMonth - 1]} · {visibleYear}
           </div>
         </div>
-        <div className="text-right text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
-          365 ngày
-          <br />
-          <span className="text-primary">Một ý tưởng</span>
+        <div className="flex flex-col items-end gap-3">
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={() => changeVisibleMonth(-1)}
+              className="inline-flex h-8 w-8 items-center justify-center rounded-sm border border-border bg-background text-primary transition hover:border-primary hover:bg-primary hover:text-primary-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-card"
+              aria-label="Xem tháng trước"
+              title="Tháng trước"
+            >
+              <ChevronLeft className="h-4 w-4" aria-hidden />
+            </button>
+            <button
+              type="button"
+              onClick={() => changeVisibleMonth(1)}
+              className="inline-flex h-8 w-8 items-center justify-center rounded-sm border border-border bg-background text-primary transition hover:border-primary hover:bg-primary hover:text-primary-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-card"
+              aria-label="Xem tháng sau"
+              title="Tháng sau"
+            >
+              <ChevronRight className="h-4 w-4" aria-hidden />
+            </button>
+          </div>
+          <div className="text-right text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+            365 ngày
+            <br />
+            <span className="text-primary">Một ý tưởng</span>
+          </div>
         </div>
       </div>
 
@@ -164,11 +234,12 @@ export function MonthCalendar() {
           {cells.map((day, index) => {
             if (day === null) return <div key={index} className="aspect-square" />;
 
-            const quote = quotesByDay.get(day) ?? getDailyQuote(currentMonth, day);
+            const quote = quotesByDay.get(day) ?? getDailyQuote(visibleMonth, day);
             const isFav = quote
               ? favorites.includes(getFavoriteKey(quote.month, quote.day))
               : false;
-            const isToday = day === todayDay;
+            const isToday =
+              visibleYear === todayYear && visibleMonth === todayMonth && day === todayDay;
             const isActive = day === active;
 
             return (
@@ -192,7 +263,7 @@ export function MonthCalendar() {
                 ]
                   .filter(Boolean)
                   .join(" ")}
-                aria-label={`Ngày ${day}/${currentMonth}${quote ? "" : " chưa có nội dung"}`}
+                aria-label={`Ngày ${day}/${visibleMonth}/${visibleYear}${quote ? "" : " chưa có nội dung"}`}
                 title={quote ? `${quote.author}: ${quote.context}` : "Chưa có nội dung"}
               >
                 <span>{day}</span>
@@ -215,7 +286,7 @@ export function MonthCalendar() {
 
         <div className="mt-5 min-h-[110px] border-t border-border pt-4">
           <div className="mb-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-primary">
-            Ngày {String(active).padStart(2, "0")} / {String(currentMonth).padStart(2, "0")}
+            Ngày {String(active).padStart(2, "0")} / {String(visibleMonth).padStart(2, "0")}
           </div>
           {activeQuote ? (
             <>
@@ -233,11 +304,11 @@ export function MonthCalendar() {
       <div className="mt-5 border-t border-border pt-4">
         <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
           <span>Tâm đắc đã lưu</span>
-          <span className="text-primary">{currentMonthFavorites.length} bài</span>
+          <span className="text-primary">{visibleMonthFavorites.length} bài</span>
         </div>
-        {currentMonthFavorites.length > 0 ? (
+        {visibleMonthFavorites.length > 0 ? (
           <div className="mt-3 flex flex-wrap gap-1.5">
-            {currentMonthFavorites.map(({ month, day }) => {
+            {visibleMonthFavorites.map(({ month, day }) => {
               const quote = getDailyQuote(month, day);
               if (!quote) return null;
 
