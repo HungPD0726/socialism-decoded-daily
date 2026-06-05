@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useEffect, useMemo, useRef, useState, type TouchEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type TouchEvent } from "react";
 import { getDailyQuote, getQuotesForMonth } from "@/data/dailyQuotes";
 
 const WEEKDAYS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
@@ -103,27 +103,27 @@ export function MonthCalendar() {
   const visibleMonthFavorites = favorites
     .map(parseFavoriteKey)
     .filter((favorite): favorite is { month: number; day: number } => {
-      return Boolean(favorite) && favorite.month === visibleMonth;
+      return favorite !== null && favorite.month === visibleMonth;
     })
     .sort((a, b) => a.day - b.day);
 
-  const changeVisibleMonth = (offset: number) => {
+  const changeVisibleMonth = useCallback((offset: number) => {
     const nextDate = new Date(visibleYear, visibleMonth - 1 + offset, 1);
     const nextMonth = nextDate.getMonth() + 1;
     const nextYear = nextDate.getFullYear();
 
     setVisibleDate(nextDate);
     setActive((currentActive) => Math.min(currentActive, getDaysInMonth(nextYear, nextMonth)));
-  };
+  }, [visibleYear, visibleMonth]);
 
-  const handleTouchStart = (event: TouchEvent<HTMLDivElement>) => {
+  const handleTouchStart = useCallback((event: TouchEvent<HTMLDivElement>) => {
     const touch = event.touches[0];
     if (!touch) return;
 
     touchStartRef.current = { x: touch.clientX, y: touch.clientY };
-  };
+  }, []);
 
-  const handleTouchEnd = (event: TouchEvent<HTMLDivElement>) => {
+  const handleTouchEnd = useCallback((event: TouchEvent<HTMLDivElement>) => {
     const start = touchStartRef.current;
     const touch = event.changedTouches[0];
     touchStartRef.current = null;
@@ -137,9 +137,9 @@ export function MonthCalendar() {
     if (!isHorizontalSwipe) return;
 
     changeVisibleMonth(deltaX < 0 ? 1 : -1);
-  };
+  }, [changeVisibleMonth]);
 
-  const toggleFavorite = (month: number, day: number) => {
+  const toggleFavorite = useCallback((month: number, day: number) => {
     const key = getFavoriteKey(month, day);
 
     setFavorites((prev) => {
@@ -153,7 +153,7 @@ export function MonthCalendar() {
       }
       return next;
     });
-  };
+  }, []);
 
   return (
     <div

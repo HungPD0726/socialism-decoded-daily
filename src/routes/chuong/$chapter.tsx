@@ -20,11 +20,13 @@ export const Route = createFileRoute("/chuong/$chapter")({
   head: ({ loaderData }) => ({
     meta: [
       {
-        title: `Chương ${loaderData.chapter.n}: ${loaderData.chapter.title} | 365 Ngày`,
+        title: loaderData
+          ? `Chương ${loaderData.chapter.n}: ${loaderData.chapter.title} | 365 Ngày`
+          : "365 Ngày cùng Chủ nghĩa Xã hội Khoa học",
       },
       {
         name: "description",
-        content: loaderData.chapter.sub,
+        content: loaderData?.chapter.sub ?? "Hành trình 365 ngày giải mã Chủ nghĩa Xã hội Khoa học.",
       },
     ],
   }),

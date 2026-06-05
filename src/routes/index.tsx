@@ -91,7 +91,11 @@ function Home() {
   const [projectDialogOpen, setProjectDialogOpen] = useState(false);
 
   useEffect(() => {
-    setProjectDialogOpen(true);
+    // Delay dialog so it doesn't compete with the initial page paint
+    const timer = window.setTimeout(() => {
+      setProjectDialogOpen(true);
+    }, 800);
+    return () => window.clearTimeout(timer);
   }, []);
 
   const scrollToSection = (id: string) => {

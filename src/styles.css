@@ -1,5 +1,7 @@
 @import "tailwindcss" source(none);
-@source "../src";
+/* Chỉ scan file template thực sự — bỏ qua .css, .json, .md, v.v. */
+@source "../src/**/*.tsx";
+@source "../src/**/*.ts";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
@@ -152,6 +154,7 @@
   overflow: hidden;
   pointer-events: none;
   transform: translateY(-0.75rem);
+  will-change: max-height, opacity, transform;
   transition:
     max-height 320ms ease,
     opacity 220ms ease,
@@ -164,6 +167,7 @@
   overflow-y: auto;
   pointer-events: auto;
   transform: translateY(0);
+  will-change: auto;
 }
 
 .chapter-menu-closed {

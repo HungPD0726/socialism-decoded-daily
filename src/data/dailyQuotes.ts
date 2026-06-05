@@ -2602,6 +2602,24 @@ export const dailyQuotes: DailyQuote[] = [
 
 const DAYS_IN_MONTH = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
+// --- O(1) lookup maps, built once at module load ---
+
+/** Key: "month-day" → DailyQuote */
+const quoteMap = new Map<string, DailyQuote>(
+  dailyQuotes.map((q) => [`${q.month}-${q.day}`, q]),
+);
+
+/** Key: month (1-12) → DailyQuote[] for that month */
+const monthMap = new Map<number, DailyQuote[]>();
+for (const q of dailyQuotes) {
+  const list = monthMap.get(q.month);
+  if (list) {
+    list.push(q);
+  } else {
+    monthMap.set(q.month, [q]);
+  }
+}
+
 export function getDailyQuote(month: number, day: number): DailyQuote | undefined {
   const normalizedMonth = Math.trunc(month);
   const normalizedDay = normalizedMonth === 2 && Math.trunc(day) === 29 ? 28 : Math.trunc(day);
@@ -2610,9 +2628,7 @@ export function getDailyQuote(month: number, day: number): DailyQuote | undefine
   const daysInMonth = DAYS_IN_MONTH[normalizedMonth - 1];
   if (normalizedDay < 1 || normalizedDay > daysInMonth) return undefined;
 
-  return dailyQuotes.find(
-    (quote) => quote.month === normalizedMonth && quote.day === normalizedDay,
-  );
+  return quoteMap.get(`${normalizedMonth}-${normalizedDay}`);
 }
 
 export function getDailyQuoteForDate(date: Date): DailyQuote | undefined {
@@ -2621,7 +2637,7 @@ export function getDailyQuoteForDate(date: Date): DailyQuote | undefined {
 
 export function getQuotesForMonth(month: number): DailyQuote[] {
   const normalizedMonth = Math.trunc(month);
-  return dailyQuotes.filter((quote) => quote.month === normalizedMonth);
+  return monthMap.get(normalizedMonth) ?? [];
 }
 
 export function getAdjacentDailyQuotes(date = new Date(), count = 3): DailyQuote[] {
