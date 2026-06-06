@@ -1,13 +1,36 @@
-import { defineConfig } from "vite";
+import { copyFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { defineConfig, type PluginOption } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
+function githubPagesSpaFallback(): PluginOption {
+  let outDir = "";
+
+  return {
+    name: "github-pages-spa-fallback",
+    apply: "build",
+    configResolved(config) {
+      outDir = resolve(config.root, config.build.outDir);
+    },
+    closeBundle() {
+      copyFileSync(resolve(outDir, "index.html"), resolve(outDir, "404.html"));
+    },
+  };
+}
+
 // Separate Vite config for static GitHub Pages build (CSR / SPA mode).
 // Does NOT use @lovable.dev/vite-tanstack-config or TanStack Start SSR.
 export default defineConfig({
-  plugins: [tanstackRouter({ target: "react" }), react(), tailwindcss(), tsconfigPaths()],
+  plugins: [
+    tanstackRouter({ target: "react" }),
+    react(),
+    tailwindcss(),
+    tsconfigPaths(),
+    githubPagesSpaFallback(),
+  ],
   base: "/socialism-decoded-daily/",
   build: {
     outDir: "dist-static",
