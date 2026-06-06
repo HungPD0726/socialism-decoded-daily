@@ -1,6 +1,11 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState, type TouchEvent } from "react";
-import { getDailyQuote, getQuotesForMonth } from "@/data/dailyQuotes";
+import {
+  getQuotesByDay,
+  getQuotesForMonth,
+  type CalendarDateParts,
+  type DailyQuote,
+} from "@/data/dailyQuotes";
 
 const WEEKDAYS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
 const MONTH_NAMES = [
@@ -20,6 +25,7 @@ const MONTH_NAMES = [
 
 const FAVORITES_KEY = "365-favorite-quotes";
 const LEGACY_STORAGE_KEY = "365-favorites-thang-3";
+const EMPTY_QUOTES: DailyQuote[] = [];
 
 function getFavoriteKey(month: number, day: number) {
   return `${month}-${day}`;
@@ -35,16 +41,21 @@ function getDaysInMonth(year: number, month: number) {
   return new Date(year, month, 0).getDate();
 }
 
-export function MonthCalendar() {
-  const today = useMemo(() => new Date(), []);
-  const todayMonth = today.getMonth() + 1;
-  const todayYear = today.getFullYear();
-  const todayDay = today.getDate();
+type MonthCalendarProps = {
+  initialQuotes: DailyQuote[];
+  today: CalendarDateParts;
+};
 
+export function MonthCalendar({ initialQuotes, today }: MonthCalendarProps) {
+  const todayMonth = today.month;
+  const todayYear = today.year;
+  const todayDay = today.day;
   const [favorites, setFavorites] = useState<string[]>([]);
-  const [visibleDate, setVisibleDate] = useState(
-    () => new Date(today.getFullYear(), today.getMonth(), 1),
+  const [quotesByMonth, setQuotesByMonth] = useState(
+    () => new Map<number, DailyQuote[]>([[todayMonth, initialQuotes]]),
   );
+  const [loadingMonth, setLoadingMonth] = useState<number | null>(null);
+  const [visibleDate, setVisibleDate] = useState(() => new Date(today.year, today.month - 1, 1));
   const [active, setActive] = useState(todayDay);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
 
@@ -76,11 +87,44 @@ export function MonthCalendar() {
     }
   }, []);
 
-  const monthQuotes = useMemo(() => getQuotesForMonth(visibleMonth), [visibleMonth]);
-  const quotesByDay = useMemo(
-    () => new Map(monthQuotes.map((quote) => [quote.day, quote])),
-    [monthQuotes],
+  const monthQuotes = useMemo(
+    () => quotesByMonth.get(visibleMonth) ?? EMPTY_QUOTES,
+    [quotesByMonth, visibleMonth],
   );
+  const isMonthLoading = loadingMonth === visibleMonth && !quotesByMonth.has(visibleMonth);
+  const quotesByDay = useMemo(() => getQuotesByDay(monthQuotes), [monthQuotes]);
+
+  useEffect(() => {
+    if (quotesByMonth.has(visibleMonth)) return;
+
+    let isCurrent = true;
+    setLoadingMonth(visibleMonth);
+
+    getQuotesForMonth(visibleMonth)
+      .then((quotes) => {
+        if (!isCurrent) return;
+
+        setQuotesByMonth((currentQuotesByMonth) => {
+          if (currentQuotesByMonth.has(visibleMonth)) return currentQuotesByMonth;
+
+          const nextQuotesByMonth = new Map(currentQuotesByMonth);
+          nextQuotesByMonth.set(visibleMonth, quotes);
+          return nextQuotesByMonth;
+        });
+      })
+      .catch((error) => {
+        console.warn("Could not load calendar quotes", error);
+      })
+      .finally(() => {
+        if (!isCurrent) return;
+
+        setLoadingMonth((currentMonth) => (currentMonth === visibleMonth ? null : currentMonth));
+      });
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [quotesByMonth, visibleMonth]);
 
   const daysInMonth = useMemo(
     () => getDaysInMonth(visibleYear, visibleMonth),
@@ -99,22 +143,29 @@ export function MonthCalendar() {
     return days;
   }, [visibleMonth, visibleYear, daysInMonth]);
 
-  const activeQuote = getDailyQuote(visibleMonth, active);
-  const visibleMonthFavorites = favorites
-    .map(parseFavoriteKey)
-    .filter((favorite): favorite is { month: number; day: number } => {
-      return favorite !== null && favorite.month === visibleMonth;
-    })
-    .sort((a, b) => a.day - b.day);
+  const activeQuote = quotesByDay.get(active);
+  const visibleMonthFavorites = useMemo(
+    () =>
+      favorites
+        .map(parseFavoriteKey)
+        .filter((favorite): favorite is { month: number; day: number } => {
+          return favorite !== null && favorite.month === visibleMonth;
+        })
+        .sort((a, b) => a.day - b.day),
+    [favorites, visibleMonth],
+  );
 
-  const changeVisibleMonth = useCallback((offset: number) => {
-    const nextDate = new Date(visibleYear, visibleMonth - 1 + offset, 1);
-    const nextMonth = nextDate.getMonth() + 1;
-    const nextYear = nextDate.getFullYear();
+  const changeVisibleMonth = useCallback(
+    (offset: number) => {
+      const nextDate = new Date(visibleYear, visibleMonth - 1 + offset, 1);
+      const nextMonth = nextDate.getMonth() + 1;
+      const nextYear = nextDate.getFullYear();
 
-    setVisibleDate(nextDate);
-    setActive((currentActive) => Math.min(currentActive, getDaysInMonth(nextYear, nextMonth)));
-  }, [visibleYear, visibleMonth]);
+      setVisibleDate(nextDate);
+      setActive((currentActive) => Math.min(currentActive, getDaysInMonth(nextYear, nextMonth)));
+    },
+    [visibleYear, visibleMonth],
+  );
 
   const handleTouchStart = useCallback((event: TouchEvent<HTMLDivElement>) => {
     const touch = event.touches[0];
@@ -123,21 +174,24 @@ export function MonthCalendar() {
     touchStartRef.current = { x: touch.clientX, y: touch.clientY };
   }, []);
 
-  const handleTouchEnd = useCallback((event: TouchEvent<HTMLDivElement>) => {
-    const start = touchStartRef.current;
-    const touch = event.changedTouches[0];
-    touchStartRef.current = null;
+  const handleTouchEnd = useCallback(
+    (event: TouchEvent<HTMLDivElement>) => {
+      const start = touchStartRef.current;
+      const touch = event.changedTouches[0];
+      touchStartRef.current = null;
 
-    if (!start || !touch) return;
+      if (!start || !touch) return;
 
-    const deltaX = touch.clientX - start.x;
-    const deltaY = touch.clientY - start.y;
-    const isHorizontalSwipe = Math.abs(deltaX) >= 50 && Math.abs(deltaX) > Math.abs(deltaY) * 1.2;
+      const deltaX = touch.clientX - start.x;
+      const deltaY = touch.clientY - start.y;
+      const isHorizontalSwipe = Math.abs(deltaX) >= 50 && Math.abs(deltaX) > Math.abs(deltaY) * 1.2;
 
-    if (!isHorizontalSwipe) return;
+      if (!isHorizontalSwipe) return;
 
-    changeVisibleMonth(deltaX < 0 ? 1 : -1);
-  }, [changeVisibleMonth]);
+      changeVisibleMonth(deltaX < 0 ? 1 : -1);
+    },
+    [changeVisibleMonth],
+  );
 
   const toggleFavorite = useCallback((month: number, day: number) => {
     const key = getFavoriteKey(month, day);
@@ -215,11 +269,13 @@ export function MonthCalendar() {
               {activeQuote.author} · {activeQuote.context}
             </p>
           </>
+        ) : isMonthLoading ? (
+          <p className="text-sm text-muted-foreground">Đang tải nội dung tháng này.</p>
         ) : (
           <p className="text-sm text-muted-foreground">Nội dung ngày này đang được cập nhật.</p>
         )}
         <div className="mt-5 text-xs uppercase tracking-[0.3em] text-muted-foreground">
-          {monthQuotes.length} nội dung trong tháng này
+          {isMonthLoading ? "Đang tải nội dung" : `${monthQuotes.length} nội dung trong tháng này`}
         </div>
       </div>
 
@@ -234,7 +290,7 @@ export function MonthCalendar() {
           {cells.map((day, index) => {
             if (day === null) return <div key={index} className="aspect-square" />;
 
-            const quote = quotesByDay.get(day) ?? getDailyQuote(visibleMonth, day);
+            const quote = quotesByDay.get(day);
             const isFav = quote
               ? favorites.includes(getFavoriteKey(quote.month, quote.day))
               : false;
@@ -295,6 +351,8 @@ export function MonthCalendar() {
                 {activeQuote.author} · {activeQuote.context}
               </p>
             </>
+          ) : isMonthLoading ? (
+            <p className="text-xs text-muted-foreground">Đang tải nội dung tháng này.</p>
           ) : (
             <p className="text-xs text-muted-foreground">Nội dung ngày này đang được cập nhật.</p>
           )}
@@ -309,7 +367,7 @@ export function MonthCalendar() {
         {visibleMonthFavorites.length > 0 ? (
           <div className="mt-3 flex flex-wrap gap-1.5">
             {visibleMonthFavorites.map(({ month, day }) => {
-              const quote = getDailyQuote(month, day);
+              const quote = quotesByDay.get(day);
               if (!quote) return null;
 
               return (

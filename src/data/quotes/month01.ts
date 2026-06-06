@@ -1,0 +1,237 @@
+import type { DailyQuote } from "../dailyQuotes";
+
+export const month01Quotes: DailyQuote[] = [
+  {
+    month: 1,
+    day: 1,
+    quote:
+      "Chủ nghĩa xã hội khoa học là khoa học về những điều kiện và con đường giải phóng giai cấp công nhân.",
+    author: "Friedrich Engels",
+    context: "Chống Đuyring",
+  },
+  {
+    month: 1,
+    day: 2,
+    quote:
+      "Giai cấp công nhân không chỉ là người làm việc trong nhà máy, họ là đại diện cho lực lượng sản xuất tiên tiến nhất của thời đại.",
+    author: "Karl Marx",
+    context: "CNXHKH",
+  },
+  {
+    month: 1,
+    day: 3,
+    quote:
+      "Sự phát triển của chủ nghĩa tư bản đồng thời chuẩn bị những điều kiện vật chất cho sự ra đời của xã hội mới.",
+    author: "Karl Marx",
+    context: "Tư bản",
+  },
+  {
+    month: 1,
+    day: 4,
+    quote:
+      "CNXH từ không tưởng trở thành khoa học nhờ hai phát kiến vĩ đại: chủ nghĩa duy vật lịch sử và học thuyết giá trị thặng dư.",
+    author: "V.I. Lenin",
+    context: "Ba nguồn gốc",
+  },
+  {
+    month: 1,
+    day: 5,
+    quote:
+      "Các nhà triết học đã chỉ giải thích thế giới bằng nhiều cách khác nhau, vấn đề là cải tạo thế giới.",
+    author: "Karl Marx",
+    context: "Luận cương về Feuerbach",
+  },
+  {
+    month: 1,
+    day: 6,
+    quote:
+      "Trong sản xuất xã hội, con người bước vào những quan hệ nhất định, tất yếu, không phụ thuộc vào ý muốn của họ.",
+    author: "Karl Marx",
+    context: "Lời tựa Góp phần phê phán",
+  },
+  {
+    month: 1,
+    day: 7,
+    quote:
+      "Không phải ý thức con người quyết định tồn tại của họ; trái lại, tồn tại xã hội quyết định ý thức xã hội.",
+    author: "Karl Marx",
+    context: "Duy vật lịch sử",
+  },
+  {
+    month: 1,
+    day: 8,
+    quote: "Lịch sử tất cả các xã hội cho đến nay là lịch sử đấu tranh giai cấp.",
+    author: "Karl Marx & Friedrich Engels",
+    context: "Tuyên ngôn Đảng Cộng sản",
+  },
+  {
+    month: 1,
+    day: 9,
+    quote:
+      "Sự sụp đổ của giai cấp tư sản và thắng lợi của giai cấp vô sản đều là tất yếu như nhau.",
+    author: "Karl Marx & Friedrich Engels",
+    context: "Tuyên ngôn Đảng Cộng sản",
+  },
+  {
+    month: 1,
+    day: 10,
+    quote: "Giai cấp tư sản đã tạo ra những người đào mồ chôn chính nó.",
+    author: "Karl Marx",
+    context: "Tuyên ngôn Đảng Cộng sản",
+  },
+  {
+    month: 1,
+    day: 11,
+    quote:
+      "CNXH không tưởng phê phán xã hội tư bản rất sâu sắc nhưng không tìm ra lực lượng xã hội thay thế.",
+    author: "V.I. Lenin",
+    context: "Ba nguồn gốc CNML",
+  },
+  {
+    month: 1,
+    day: 12,
+    quote:
+      "Saint-Simon, Fourier, Owen là những người mở đường vĩ đại cho tư tưởng xã hội chủ nghĩa.",
+    author: "Friedrich Engels",
+    context: "CNXH: Không tưởng và Khoa học",
+  },
+  {
+    month: 1,
+    day: 13,
+    quote:
+      "Owen đã chứng minh bằng thực tế rằng con người có thể được cải tạo trong môi trường xã hội tốt đẹp.",
+    author: "Friedrich Engels",
+    context: "Về Owen",
+  },
+  {
+    month: 1,
+    day: 14,
+    quote: "Fourier phê phán CNTB bằng sự hài hước và chiều sâu hiếm có.",
+    author: "Friedrich Engels",
+    context: "Về Fourier",
+  },
+  {
+    month: 1,
+    day: 15,
+    quote: "Thực tiễn là tiêu chuẩn của chân lý.",
+    author: "V.I. Lenin",
+    context: "Về nhận thức",
+  },
+  {
+    month: 1,
+    day: 16,
+    quote: "Không có lý luận cách mạng thì không có phong trào cách mạng.",
+    author: "V.I. Lenin",
+    context: "Làm gì?",
+  },
+  {
+    month: 1,
+    day: 17,
+    quote: "Lý luận của Mác là toàn năng vì nó là chính xác.",
+    author: "V.I. Lenin",
+    context: "Ba nguồn gốc",
+  },
+  {
+    month: 1,
+    day: 18,
+    quote:
+      "Học thuyết Mác ra đời là sự kế thừa trực tiếp những học thuyết tốt đẹp nhất mà loài người đã tạo ra.",
+    author: "V.I. Lenin",
+    context: "Ba nguồn gốc",
+  },
+  {
+    month: 1,
+    day: 19,
+    quote: "Mỗi bước tiến thực sự của phong trào có giá trị hơn cả tá cương lĩnh.",
+    author: "Karl Marx",
+    context: "Phê phán Cương lĩnh Gotha",
+  },
+  {
+    month: 1,
+    day: 20,
+    quote: "Giá trị thặng dư là bí mật của sự bóc lột tư bản chủ nghĩa.",
+    author: "Karl Marx",
+    context: "Tư bản",
+  },
+  {
+    month: 1,
+    day: 21,
+    quote:
+      "Sức lao động là hàng hóa duy nhất mà giá trị sử dụng của nó tạo ra giá trị mới lớn hơn giá trị của chính nó.",
+    author: "Karl Marx",
+    context: "Tư bản",
+  },
+  {
+    month: 1,
+    day: 22,
+    quote: "Tư bản không phải là một vật, mà là một quan hệ sản xuất xã hội.",
+    author: "Karl Marx",
+    context: "Tư bản",
+  },
+  {
+    month: 1,
+    day: 23,
+    quote: "Giải phóng con người là mục tiêu cao cả nhất.",
+    author: "Karl Marx",
+    context: "Mục tiêu cách mạng",
+  },
+  {
+    month: 1,
+    day: 24,
+    quote:
+      "Con người tạo nên lịch sử của chính mình, nhưng không phải trong hoàn cảnh do họ tự chọn.",
+    author: "Karl Marx",
+    context: "18 Brumaire",
+  },
+  {
+    month: 1,
+    day: 25,
+    quote: "Vũ khí phê phán không thể thay thế sự phê phán bằng vũ khí.",
+    author: "Karl Marx",
+    context: "Về cách mạng",
+  },
+  {
+    month: 1,
+    day: 26,
+    quote: "Khi lý luận được nắm vững bởi quần chúng, nó trở thành lực lượng vật chất.",
+    author: "Karl Marx",
+    context: "Sức mạnh lý luận",
+  },
+  {
+    month: 1,
+    day: 27,
+    quote: "Cách mạng là đầu máy của lịch sử.",
+    author: "Karl Marx",
+    context: "Về cách mạng",
+  },
+  {
+    month: 1,
+    day: 28,
+    quote: "Điều kiện giải phóng giai cấp công nhân chính là xóa bỏ mọi giai cấp.",
+    author: "Karl Marx",
+    context: "Sự khốn cùng của triết học",
+  },
+  {
+    month: 1,
+    day: 29,
+    quote:
+      "Tôn giáo là tiếng thở dài của chúng sinh bị áp bức, là trái tim của thế giới không có trái tim.",
+    author: "Karl Marx",
+    context: "Phê phán triết học pháp quyền",
+  },
+  {
+    month: 1,
+    day: 30,
+    quote: "Giai cấp vô sản chỉ có mất xiềng xích, còn được cả thế giới.",
+    author: "Karl Marx & Friedrich Engels",
+    context: "Tuyên ngôn",
+  },
+  {
+    month: 1,
+    day: 31,
+    quote:
+      "CNXHKH là vũ khí lý luận sắc bén nhất của giai cấp công nhân trong cuộc đấu tranh giải phóng.",
+    author: "Friedrich Engels",
+    context: "Chống Đuyring",
+  },
+];

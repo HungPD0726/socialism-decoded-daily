@@ -83,3 +83,21 @@ export const chapters: Chapter[] = [
 export function getChapter(chapterNumber: number) {
   return chapters.find((chapter) => chapter.n === chapterNumber);
 }
+
+export const publishedChapters = chapters
+  .filter((chapter) => chapter.isPublished)
+  .sort((a, b) => a.n - b.n);
+
+const chapterNavigation = new Map(
+  publishedChapters.map((chapter, index) => [
+    chapter.n,
+    {
+      previousChapter: publishedChapters[index - 1]?.n ?? null,
+      nextChapter: publishedChapters[index + 1]?.n ?? null,
+    },
+  ]),
+);
+
+export function getChapterNavigation(chapterNumber: number) {
+  return chapterNavigation.get(chapterNumber) ?? { previousChapter: null, nextChapter: null };
+}

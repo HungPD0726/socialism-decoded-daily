@@ -1,8 +1,9 @@
 @import "tailwindcss" source(none);
-/* Chỉ scan file template thực sự — bỏ qua .css, .json, .md, v.v. */
-@source "../src/**/*.tsx";
-@source "../src/**/*.ts";
-@import "tw-animate-css";
+/* Keep Tailwind's generated CSS scoped to files that render runtime classes. */
+@source "../src/routes/**/*.tsx";
+@source "../src/components/MonthCalendar.tsx";
+@source "../src/components/ProjectIntroDialog.tsx";
+@source "../src/components/ui/dialog.tsx";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -86,7 +87,9 @@
 }
 
 @layer base {
-  * { border-color: var(--color-border); }
+  * {
+    border-color: var(--color-border);
+  }
   html {
     scroll-behavior: smooth;
   }
@@ -96,7 +99,13 @@
     font-family: var(--font-sans);
     font-feature-settings: "ss01", "cv11";
   }
-  h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.02em; }
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
 }
 
 /* Decorative star */
@@ -178,6 +187,75 @@
   animation: chapter-card-highlight 1400ms ease-out;
 }
 
+.animate-fade-in {
+  animation: fade-in 180ms ease-out both;
+}
+
+.dialog-overlay-motion[data-state="open"] {
+  animation: dialog-overlay-in 160ms ease-out both;
+}
+
+.dialog-overlay-motion[data-state="closed"] {
+  animation: dialog-overlay-out 120ms ease-in both;
+}
+
+.dialog-content-motion[data-state="open"] {
+  animation: dialog-content-in 200ms ease-out both;
+}
+
+.dialog-content-motion[data-state="closed"] {
+  animation: dialog-content-out 140ms ease-in both;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes dialog-overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes dialog-overlay-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes dialog-content-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes dialog-content-out {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+}
+
 @keyframes chapter-card-highlight {
   0% {
     box-shadow:
@@ -205,6 +283,12 @@
 
   .chapter-menu-shell {
     transition: none;
+  }
+
+  .animate-fade-in,
+  .dialog-overlay-motion[data-state],
+  .dialog-content-motion[data-state] {
+    animation: none;
   }
 
   .chapter-card-selected {
