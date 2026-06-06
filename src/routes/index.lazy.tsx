@@ -61,10 +61,15 @@ function Home() {
   const [projectDialogMounted, setProjectDialogMounted] = useState(false);
 
   useEffect(() => {
+    // Chỉ hiện popup 1 lần mỗi session (không hiện lại khi navigate)
+    const alreadyShown = sessionStorage.getItem("intro-dialog-shown");
+    if (alreadyShown) return;
+
     // Delay dialog so it doesn't compete with the initial page paint
     const timer = window.setTimeout(() => {
       setProjectDialogMounted(true);
       setProjectDialogOpen(true);
+      sessionStorage.setItem("intro-dialog-shown", "1");
     }, 800);
     return () => window.clearTimeout(timer);
   }, []);
