@@ -37,7 +37,10 @@ export default defineConfig({
     emptyOutDir: true,
     target: "esnext",
     cssCodeSplit: true,
+    sourcemap: false,
+    chunkSizeWarningLimit: 1500,
     rollupOptions: {
+      input: "index.html",
       output: {
         manualChunks(id) {
           if (!id.includes("node_modules")) return;
