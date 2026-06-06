@@ -17,7 +17,7 @@ type ProjectIntroDialogProps = {
 export function ProjectIntroDialog({ members, open, onOpenChange }: ProjectIntroDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 max-h-[90vh] w-[calc(100%-2rem)] max-w-2xl overflow-y-auto border-2 border-primary/30 p-0">
+      <DialogContent className="max-h-[90vh] w-[calc(100%-2rem)] max-w-2xl overflow-y-auto border-2 border-primary/30 p-0">
         <div className="banner-stripes h-1.5" />
         <div className="space-y-6 px-6 pb-6 pt-8 sm:px-8">
           <DialogHeader className="text-left">
