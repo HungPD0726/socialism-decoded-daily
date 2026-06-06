@@ -355,7 +355,7 @@ function Home() {
           </div>
 
           <div className="grid gap-6 md:grid-cols-3">
-            {dailyLessons.map((quote, index) => (
+            {dailyLessons.map((quote: DailyQuote, index: number) => (
               <article
                 key={`${quote.month}-${quote.day}`}
                 className="relative flex flex-col border border-background/15 bg-background/[0.03] p-8 backdrop-blur transition hover:bg-background/[0.06]"
