@@ -5,7 +5,7 @@ import {
   getDailyQuoteForDate,
   getQuotesForMonth,
   TOTAL_DAILY_QUOTES,
-} from "@/data/dailyQuotes";
+} from "@/features/learning/data/dailyQuotes";
 
 export const Route = createFileRoute("/")({
   loader: async () => {
@@ -31,7 +31,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Hành trình 365 ngày giải mã Chủ nghĩa Xã hội Khoa học — từ Tuyên ngôn của Đảng Cộng sản đến đời sống hôm nay.",
+          "Hành trình 365 ngày giải mã Chủ nghĩa Xã hội Khoa học theo 12 chủ đề bám giáo trình.",
       },
       { property: "og:title", content: "365 Ngày cùng Chủ nghĩa Xã hội Khoa học" },
       {

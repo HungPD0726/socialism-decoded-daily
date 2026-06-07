@@ -1,0 +1,56 @@
+import { createMonthQuotes, type LessonBlock } from "./createMonthQuotes";
+
+const lessonBlocks: LessonBlock[] = [
+  {
+    context: "Chương 6 - Bản chất và nguồn gốc tôn giáo",
+    points: [
+      "Tôn giáo là một hình thái ý thức xã hội phản ánh hiện thực bằng niềm tin vào lực lượng siêu nhiên.",
+      "Tôn giáo có nguồn gốc nhận thức khi con người chưa giải thích đầy đủ các hiện tượng tự nhiên và xã hội.",
+      "Nguồn gốc kinh tế - xã hội của tôn giáo gắn với bất lực trước những điều kiện sống áp bức và rủi ro.",
+      "Nguồn gốc tâm lý của tôn giáo nằm ở nhu cầu an ủi, hy vọng và điểm tựa tinh thần.",
+      "Tôn giáo có tính lịch sử, tính quần chúng và tính chính trị trong những điều kiện nhất định.",
+      "Không thể giải quyết vấn đề tôn giáo bằng phủ nhận giản đơn nhu cầu tinh thần của con người.",
+      "Nhận thức khoa học về tôn giáo cần phân biệt niềm tin tôn giáo với hành vi lợi dụng tôn giáo.",
+      "Tôn giáo còn tồn tại trong thời kỳ quá độ vì những điều kiện sinh ra nó chưa mất đi ngay.",
+    ],
+  },
+  {
+    context: "Chương 6 - Nguyên tắc giải quyết vấn đề tôn giáo",
+    points: [
+      "Tôn trọng và bảo đảm quyền tự do tín ngưỡng, tôn giáo là nguyên tắc cơ bản.",
+      "Quyền tự do tín ngưỡng bao gồm quyền theo hoặc không theo một tôn giáo.",
+      "Các tôn giáo bình đẳng trước pháp luật và hoạt động trong khuôn khổ pháp luật.",
+      "Đoàn kết đồng bào có tôn giáo và không có tôn giáo là yêu cầu của khối đại đoàn kết.",
+      "Cần phân biệt nhu cầu tín ngưỡng chính đáng với việc lợi dụng tôn giáo chống phá xã hội.",
+      "Giải quyết vấn đề tôn giáo phải gắn với phát triển kinh tế, văn hóa và nâng cao đời sống nhân dân.",
+      "Công tác tôn giáo cần kiên trì, mềm dẻo và tôn trọng đặc điểm của từng cộng đồng.",
+      "Đấu tranh về tư tưởng phải đi cùng thuyết phục, giáo dục và đối thoại.",
+    ],
+  },
+  {
+    context: "Chương 6 - Tôn giáo ở Việt Nam",
+    points: [
+      "Việt Nam có đời sống tín ngưỡng, tôn giáo đa dạng và lâu đời.",
+      "Nhiều tôn giáo ở Việt Nam gắn bó với dân tộc và đóng góp cho đời sống văn hóa - xã hội.",
+      "Chính sách tôn giáo của Việt Nam hướng tới đoàn kết, tôn trọng và phát huy giá trị đạo đức tốt đẹp.",
+      "Đồng bào tôn giáo là bộ phận của khối đại đoàn kết toàn dân tộc.",
+      "Hoạt động tôn giáo hợp pháp được Nhà nước bảo hộ theo quy định pháp luật.",
+      "Phòng chống lợi dụng tôn giáo cần dựa trên pháp luật và sự đồng thuận của nhân dân.",
+      "Đối thoại với chức sắc, tín đồ giúp chính sách tôn giáo đi vào đời sống.",
+    ],
+  },
+  {
+    context: "Chương 6 - Liên hệ học tập",
+    points: [
+      "Tôn trọng khác biệt tín ngưỡng là biểu hiện của văn hóa dân chủ.",
+      "Người học cần nhìn tôn giáo như hiện tượng xã hội phức hợp, không quy giản thành mê tín.",
+      "Phát huy giá trị nhân văn của tôn giáo có thể góp phần xây dựng đạo đức xã hội.",
+      "Bài trừ mê tín dị đoan cần đi cùng nâng cao dân trí và dịch vụ văn hóa lành mạnh.",
+      "Không kỳ thị tôn giáo là điều kiện để củng cố đoàn kết cộng đồng.",
+      "Quản lý nhà nước về tôn giáo cần minh bạch, công bằng và gần dân.",
+      "Giải quyết tốt vấn đề tôn giáo làm tăng đồng thuận xã hội trong thời kỳ quá độ.",
+    ],
+  },
+];
+
+export const month11Quotes = createMonthQuotes(11, lessonBlocks);

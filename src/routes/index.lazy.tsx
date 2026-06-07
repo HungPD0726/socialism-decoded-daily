@@ -1,13 +1,13 @@
 import { lazy, Suspense, useEffect, useState, type MouseEvent } from "react";
 import { ChevronDown, Info } from "lucide-react";
 import { createLazyFileRoute, getRouteApi, Link } from "@tanstack/react-router";
-import { MarxLinePortrait } from "@/components/MarxLinePortrait";
-import { MonthCalendar } from "@/components/MonthCalendar";
-import { chapters as months } from "@/data/chapters";
-import type { DailyQuote } from "@/data/dailyQuotes";
+import { MarxLinePortrait } from "@/components/brand/MarxLinePortrait";
+import { MonthCalendar } from "@/features/home/components/MonthCalendar";
+import { chapters as months } from "@/features/learning/data/chapters";
+import type { DailyQuote } from "@/features/learning/data/dailyQuotes";
 
 const ProjectIntroDialog = lazy(() =>
-  import("@/components/ProjectIntroDialog").then((module) => ({
+  import("@/features/home/components/ProjectIntroDialog").then((module) => ({
     default: module.ProjectIntroDialog,
   })),
 );
@@ -139,7 +139,7 @@ function Home() {
               aria-expanded={chapterMenuOpen}
               aria-controls="chapter-menu"
             >
-              Chương
+              Chủ đề
               <ChevronDown
                 className={["h-4 w-4 transition-transform", chapterMenuOpen && "rotate-180"]
                   .filter(Boolean)
@@ -289,7 +289,7 @@ function Home() {
             <div className="mb-3 text-xs font-medium uppercase tracking-[0.3em] text-primary">
               Bản đồ một năm
             </div>
-            <h2 className="font-display text-4xl md:text-5xl">12 chương, 12 chủ đề</h2>
+            <h2 className="font-display text-4xl md:text-5xl">12 tháng, 12 chủ đề</h2>
           </div>
           <div className="hidden text-sm text-muted-foreground md:block">
             Mỗi tháng dẫn dắt qua một trụ cột lý luận
@@ -326,7 +326,7 @@ function Home() {
                   params={{ chapter: String(m.n) }}
                   className="mt-8 inline-flex text-xs font-medium uppercase tracking-[0.25em] opacity-0 transition group-hover:opacity-100"
                 >
-                  Đọc chương →
+                  Đọc chủ đề →
                 </Link>
               ) : (
                 <div className="mt-8 text-xs font-medium uppercase tracking-[0.25em] opacity-0 transition group-hover:opacity-100">

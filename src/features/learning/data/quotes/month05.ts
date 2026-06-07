@@ -1,0 +1,57 @@
+import { createMonthQuotes, type LessonBlock } from "./createMonthQuotes";
+
+const lessonBlocks: LessonBlock[] = [
+  {
+    context: "Chương 3 - Khái niệm chủ nghĩa xã hội",
+    points: [
+      "CNXH được hiểu vừa là phong trào thực tiễn, vừa là học thuyết, vừa là chế độ xã hội tương lai.",
+      "Trong CNXHKH, CNXH là giai đoạn đầu của hình thái kinh tế - xã hội cộng sản chủ nghĩa.",
+      "CNXH ra đời từ yêu cầu giải quyết mâu thuẫn của chủ nghĩa tư bản và phát triển lực lượng sản xuất.",
+      "Mục tiêu của CNXH là giải phóng con người khỏi áp bức, bóc lột và bất công xã hội.",
+      "CNXH không phải khẩu hiệu đạo đức thuần túy mà là quá trình cải tạo các quan hệ xã hội.",
+      "Nhận thức CNXH cần kết hợp lý tưởng nhân văn với điều kiện lịch sử cụ thể.",
+      "Mỗi quốc gia xây dựng CNXH có hình thức, bước đi và mô hình phù hợp với hoàn cảnh riêng.",
+    ],
+  },
+  {
+    context: "Chương 3 - Đặc trưng của CNXH",
+    points: [
+      "CNXH hướng tới nền sản xuất phát triển cao dựa trên chế độ sở hữu xã hội về tư liệu sản xuất chủ yếu.",
+      "CNXH đặt con người vào vị trí trung tâm của phát triển.",
+      "Dân chủ XHCN bảo đảm quyền lực thuộc về nhân dân lao động.",
+      "Nhà nước XHCN mang bản chất của giai cấp công nhân và tính nhân dân rộng rãi.",
+      "CNXH xây dựng quan hệ bình đẳng, đoàn kết giữa các dân tộc.",
+      "Văn hóa XHCN hướng tới tiến bộ, nhân văn và phát triển toàn diện con người.",
+      "Phân phối trong CNXH gắn với lao động, hiệu quả và công bằng xã hội.",
+      "Đặc trưng CNXH chỉ hình thành đầy đủ qua quá trình xây dựng lâu dài.",
+    ],
+  },
+  {
+    context: "Chương 3 - Điều kiện xây dựng CNXH",
+    points: [
+      "Muốn xây dựng CNXH cần phát triển lực lượng sản xuất hiện đại.",
+      "Quan hệ sản xuất mới phải phù hợp với trình độ của lực lượng sản xuất.",
+      "Vai trò lãnh đạo của Đảng Cộng sản là điều kiện chính trị quan trọng.",
+      "Nhà nước của nhân dân tổ chức và bảo vệ quá trình xây dựng xã hội mới.",
+      "Liên minh giai cấp, tầng lớp tạo nền tảng xã hội cho công cuộc xây dựng CNXH.",
+      "Văn hóa và con người mới là động lực tinh thần của CNXH.",
+      "Hợp tác quốc tế giúp CNXH tiếp thu thành tựu chung của nhân loại.",
+      "Xây dựng CNXH cần kiên trì mục tiêu nhưng linh hoạt về bước đi và chính sách.",
+    ],
+  },
+  {
+    context: "Chương 3 - Tính tất yếu và hiện thực",
+    points: [
+      "Sự vận động của mâu thuẫn tư bản chủ nghĩa tạo tiền đề cho sự thay thế lịch sử.",
+      "CNXH là khả năng hiện thực khi phong trào xã hội có tổ chức và đường lối khoa học.",
+      "Không thể đánh giá CNXH chỉ bằng một mô hình lịch sử cụ thể.",
+      "Những khó khăn của quá trình xây dựng không phủ định giá trị khoa học của mục tiêu CNXH.",
+      "CNXH hiện thực cần thường xuyên đổi mới để phù hợp điều kiện phát triển mới.",
+      "Bài học giáo trình nhấn mạnh quan hệ giữa quy luật khách quan và vai trò chủ quan.",
+      "Xây dựng CNXH là quá trình lâu dài, phức tạp và có thể trải qua nhiều hình thức quá độ.",
+      "Giá trị của CNXH nằm ở khả năng kết hợp phát triển với công bằng và giải phóng con người.",
+    ],
+  },
+];
+
+export const month05Quotes = createMonthQuotes(5, lessonBlocks);

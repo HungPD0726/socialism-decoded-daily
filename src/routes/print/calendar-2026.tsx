@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { MarxLinePortrait } from "@/components/MarxLinePortrait";
-import { chapters, type Chapter } from "@/data/chapters";
-import { getQuotesForMonth, type DailyQuote } from "@/data/dailyQuotes";
+import { MarxLinePortrait } from "@/components/brand/MarxLinePortrait";
+import { chapters, type Chapter } from "@/features/learning/data/chapters";
+import { getQuotesForMonth, type DailyQuote } from "@/features/learning/data/dailyQuotes";
 
 const PRINT_YEAR = 2026;
 
@@ -681,7 +681,7 @@ function CoverPage({ months, year }: { months: CalendarMonth[]; year: number }) 
           </p>
         </div>
 
-        <div className="calendar-cover-map" aria-label="Bản đồ 12 chương">
+        <div className="calendar-cover-map" aria-label="Bản đồ 12 chủ đề">
           {months.map((month) => (
             <div key={month.chapter.n} className="calendar-cover-map-item">
               <span>{String(month.chapter.n).padStart(2, "0")}</span>
@@ -719,7 +719,7 @@ function MonthPage({ month, year }: { month: CalendarMonth; year: number }) {
           <div className="calendar-month-number">{String(month.chapter.n).padStart(2, "0")}</div>
           <div>
             <p className="calendar-kicker">
-              {monthName} · Chương {String(month.chapter.n).padStart(2, "0")}
+              {monthName} · Chủ đề {String(month.chapter.n).padStart(2, "0")}
             </p>
             <h2 className={`calendar-month-title ${getMonthTitleClass(month.chapter.n)}`}>
               {month.chapter.title}
@@ -813,7 +813,7 @@ function FinalPage({ year }: { year: number }) {
             </h2>
             <p className="calendar-final-copy">
               Cảm ơn bạn đã đồng hành cùng niên giám {year}. Quét mã để mở phiên bản web, đọc các
-              chương và tiếp tục hành trình mỗi ngày một ý tưởng.
+              chủ đề và tiếp tục hành trình mỗi ngày một ý tưởng.
             </p>
 
             <div className="calendar-member-panel">

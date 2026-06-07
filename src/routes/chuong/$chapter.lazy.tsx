@@ -27,11 +27,11 @@ function ChapterPage() {
         <div className="mt-12 grid gap-10 md:grid-cols-12 md:items-end">
           <div className="md:col-span-8">
             <div className="mb-5 text-xs font-medium uppercase tracking-[0.3em] text-primary">
-              Chương {String(chapter.n).padStart(2, "0")}
+              Chủ đề {String(chapter.n).padStart(2, "0")}
             </div>
             <h1 className="font-display text-5xl leading-none md:text-7xl">{chapter.title}</h1>
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-              {chapter.sub}. Chương này gom các bài đọc theo ngày để bạn có thể học liền mạch, từ
+              {chapter.sub}. Chủ đề này gom các bài đọc theo ngày để bạn có thể học liền mạch, từ
               khái niệm nền tảng đến các trích dẫn tiêu biểu.
             </p>
           </div>
@@ -39,7 +39,7 @@ function ChapterPage() {
           <div className="border-l-2 border-primary pl-6 md:col-span-4">
             <div className="font-display text-5xl text-primary">{quotes.length}</div>
             <div className="mt-2 text-xs uppercase tracking-[0.3em] text-muted-foreground">
-              bài học trong chương
+              bài học trong chủ đề
             </div>
           </div>
         </div>
@@ -57,7 +57,7 @@ function ChapterPage() {
                   className="inline-flex items-center gap-2 border-b-2 border-primary pb-1 font-medium text-primary"
                 >
                   <ArrowLeft className="h-4 w-4" aria-hidden />
-                  Chương trước
+                  Chủ đề trước
                 </Link>
               )}
               {nextChapter && (
@@ -66,7 +66,7 @@ function ChapterPage() {
                   params={{ chapter: String(nextChapter) }}
                   className="inline-flex items-center gap-2 border-b-2 border-primary pb-1 font-medium text-primary"
                 >
-                  Chương sau
+                  Chủ đề sau
                   <ArrowRight className="h-4 w-4" aria-hidden />
                 </Link>
               )}

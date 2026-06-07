@@ -1,6 +1,6 @@
 import "./lib/error-capture";
 
-import { handleChatRequest } from "./lib/api/chat.server";
+import { handleChatRequest } from "./features/chat/chat.server";
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
 

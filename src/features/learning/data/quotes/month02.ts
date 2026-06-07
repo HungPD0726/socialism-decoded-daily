@@ -1,0 +1,54 @@
+import { createMonthQuotes, type LessonBlock } from "./createMonthQuotes";
+
+const lessonBlocks: LessonBlock[] = [
+  {
+    context: "Chương 1 - Các giai đoạn phát triển CNXHKH",
+    points: [
+      "Sau năm 1848, CNXHKH gắn chặt với phong trào công nhân quốc tế và các tổ chức chính trị của giai cấp công nhân.",
+      "Giai đoạn Mác và Ăngghen phát triển học thuyết luôn gắn với tổng kết cách mạng và phong trào công nhân.",
+      "Công xã Pari cung cấp kinh nghiệm thực tiễn quý về nhà nước kiểu mới của giai cấp công nhân.",
+      "Sau Công xã Pari, lý luận về chuyên chính vô sản và nhà nước được bổ sung từ kinh nghiệm lịch sử cụ thể.",
+      "V.I. Lênin bảo vệ và phát triển CNXHKH trong thời đại đế quốc chủ nghĩa và cách mạng vô sản.",
+      "Cách mạng Tháng Mười mở ra thời kỳ CNXH từ lý luận trở thành hiện thực chính trị.",
+      "Sự phát triển của CNXHKH luôn gắn với tổng kết thực tiễn và điều kiện lịch sử mới.",
+    ],
+  },
+  {
+    context: "Chương 1 - Đối tượng nghiên cứu",
+    points: [
+      "Đối tượng của CNXHKH là các quy luật chính trị - xã hội của quá trình hình thành xã hội xã hội chủ nghĩa.",
+      "Môn học nghiên cứu sứ mệnh lịch sử của giai cấp công nhân trong sự thay thế xã hội cũ bằng xã hội mới.",
+      "CNXHKH làm rõ điều kiện, hình thức và con đường giải phóng giai cấp, dân tộc và con người.",
+      "Đối tượng môn học không tách khỏi dân chủ, nhà nước, liên minh giai cấp, dân tộc, tôn giáo và gia đình.",
+      "CNXHKH kết nối lý luận chung với việc vận dụng vào từng quốc gia cụ thể.",
+      "Ở Việt Nam, môn học chú trọng con đường quá độ lên CNXH và thực tiễn đổi mới.",
+      "Nghiên cứu CNXHKH cần nhận ra quan hệ giữa quy luật phổ biến và đặc điểm dân tộc.",
+    ],
+  },
+  {
+    context: "Chương 1 - Phương pháp nghiên cứu",
+    points: [
+      "Phương pháp luận của CNXHKH dựa trên chủ nghĩa duy vật biện chứng và duy vật lịch sử.",
+      "Quan điểm lịch sử - cụ thể giúp tránh áp dụng máy móc các kết luận lý luận.",
+      "Phân tích chính trị - xã hội cần đặt giai cấp, dân tộc và con người trong quan hệ lợi ích.",
+      "Tổng kết thực tiễn là cách kiểm nghiệm và bổ sung lý luận CNXHKH.",
+      "So sánh lịch sử giúp thấy sự khác nhau giữa các mô hình và con đường xây dựng CNXH.",
+      "Cách tiếp cận hệ thống giúp liên hệ kinh tế, chính trị, văn hóa và xã hội trong thời kỳ quá độ.",
+      "Học CNXHKH cần kết hợp đọc giáo trình với quan sát đời sống chính trị - xã hội hiện nay.",
+    ],
+  },
+  {
+    context: "Chương 1 - Ý nghĩa học tập",
+    points: [
+      "Môn học trang bị nền tảng để hiểu mục tiêu độc lập dân tộc gắn với CNXH ở Việt Nam.",
+      "Tri thức CNXHKH giúp nhận diện đúng các luận điểm sai lệch về chủ nghĩa xã hội.",
+      "Học tập môn học rèn năng lực phân tích vấn đề xã hội bằng lập luận có căn cứ.",
+      "Ý nghĩa thực tiễn của môn học nằm ở việc vận dụng lý luận vào trách nhiệm công dân.",
+      "CNXHKH giúp người học hiểu vì sao công bằng xã hội cần điều kiện kinh tế và chính trị tương ứng.",
+      "Môn học góp phần xây dựng niềm tin khoa học vào con đường phát triển đã được lựa chọn.",
+      "Học CNXHKH là học cách liên hệ lý tưởng nhân văn với phương pháp hành động hiện thực.",
+    ],
+  },
+];
+
+export const month02Quotes = createMonthQuotes(2, lessonBlocks);

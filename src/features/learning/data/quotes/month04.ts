@@ -1,0 +1,56 @@
+import { createMonthQuotes, type LessonBlock } from "./createMonthQuotes";
+
+const lessonBlocks: LessonBlock[] = [
+  {
+    context: "Chương 2 - Giai cấp công nhân hiện nay",
+    points: [
+      "GCCN hiện nay tăng nhanh về tri thức, kỹ năng và khả năng làm chủ công nghệ.",
+      "Công nghiệp hóa, tự động hóa và kinh tế số làm hình thức lao động công nhân đa dạng hơn.",
+      "GCCN không chỉ tập trung trong nhà máy mà còn hiện diện trong chuỗi sản xuất, dịch vụ và nền tảng số.",
+      "Trình độ học vấn và chuyên môn trở thành thước đo quan trọng của chất lượng GCCN.",
+      "Sự phân hóa thu nhập và điều kiện lao động đặt ra yêu cầu bảo vệ quyền lợi chính đáng của công nhân.",
+      "Toàn cầu hóa làm GCCN gắn với mạng lưới sản xuất quốc tế và cạnh tranh lao động mới.",
+      "Cách mạng công nghiệp hiện đại không làm mất vai trò GCCN mà làm thay đổi yêu cầu của vai trò ấy.",
+      "Nâng cao đời sống vật chất và tinh thần của công nhân là điều kiện để phát huy vai trò tiên phong.",
+    ],
+  },
+  {
+    context: "Chương 2 - Giai cấp công nhân Việt Nam",
+    points: [
+      "GCCN Việt Nam ra đời trong hoàn cảnh thuộc địa nên gắn sớm với nhiệm vụ dân tộc.",
+      "GCCN Việt Nam là lực lượng lãnh đạo cách mạng thông qua Đảng Cộng sản Việt Nam.",
+      "Sứ mệnh của GCCN Việt Nam gắn với độc lập dân tộc, CNXH và công cuộc đổi mới.",
+      "Công nghiệp hóa, hiện đại hóa làm tăng yêu cầu xây dựng GCCN về số lượng và chất lượng.",
+      "GCCN Việt Nam cần làm chủ khoa học, công nghệ và kỷ luật lao động hiện đại.",
+      "Nâng cao bản lĩnh chính trị giúp công nhân Việt Nam thích ứng trước biến động thị trường.",
+      "Xây dựng quan hệ lao động hài hòa là nhiệm vụ quan trọng trong phát triển GCCN Việt Nam.",
+      "Đào tạo nghề và giáo dục chính trị góp phần tạo nền tảng cho GCCN Việt Nam phát triển.",
+    ],
+  },
+  {
+    context: "Chương 2 - Vai trò lãnh đạo và liên minh xã hội",
+    points: [
+      "GCCN Việt Nam thực hiện vai trò lãnh đạo thông qua Đảng và hệ thống chính trị.",
+      "Liên minh công nhân - nông dân - trí thức là nền tảng xã hội quan trọng của cách mạng Việt Nam.",
+      "Đoàn kết giữa các tầng lớp lao động giúp biến lợi ích giai cấp thành lợi ích dân tộc.",
+      "Công đoàn cần bảo vệ quyền lợi người lao động và tham gia xây dựng chính sách xã hội.",
+      "Phát triển GCCN không tách khỏi phát triển doanh nghiệp, công nghệ và an sinh.",
+      "Đảng lãnh đạo GCCN bằng đường lối phù hợp với yêu cầu phát triển đất nước.",
+      "Sự trưởng thành của GCCN Việt Nam là một tiêu chí của công nghiệp hóa, hiện đại hóa.",
+    ],
+  },
+  {
+    context: "Chương 2 - Liên hệ học tập",
+    points: [
+      "Người học cần nhận diện GCCN bằng vị trí xã hội, không chỉ bằng hình ảnh lao động chân tay.",
+      "Tôn trọng lao động công nghiệp là tôn trọng nền tảng vật chất của xã hội hiện đại.",
+      "Hiểu GCCN hiện nay giúp tránh cách nhìn giản đơn về giai cấp trong thời đại số.",
+      "Mỗi công dân trẻ có thể góp phần nâng cao chất lượng lao động bằng học tập suốt đời.",
+      "Kỹ năng số và ý thức kỷ luật là yêu cầu mới đối với người lao động hiện đại.",
+      "Bảo vệ quyền lợi người lao động cần đi cùng trách nhiệm nâng cao năng suất và chất lượng.",
+      "Sứ mệnh GCCN ở Việt Nam hôm nay thể hiện trong xây dựng đất nước giàu mạnh, dân chủ, công bằng, văn minh.",
+    ],
+  },
+];
+
+export const month04Quotes = createMonthQuotes(4, lessonBlocks);

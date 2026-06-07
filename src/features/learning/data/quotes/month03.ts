@@ -1,0 +1,62 @@
+import { createMonthQuotes, type LessonBlock } from "./createMonthQuotes";
+
+const lessonBlocks: LessonBlock[] = [
+  {
+    context: "Chương 2 - Khái niệm giai cấp công nhân",
+    points: [
+      "Giai cấp công nhân là sản phẩm của nền đại công nghiệp và phương thức sản xuất hiện đại.",
+      "GCCN gắn với lao động công nghiệp, kỹ thuật hiện đại và tính xã hội hóa cao của sản xuất.",
+      "Khái niệm GCCN cần được hiểu cả ở phương diện kinh tế - xã hội và chính trị - xã hội.",
+      "Trong chủ nghĩa tư bản, GCCN không sở hữu tư liệu sản xuất chủ yếu và phải bán sức lao động.",
+      "Trong chủ nghĩa xã hội, GCCN cùng nhân dân lao động làm chủ quá trình xây dựng xã hội mới.",
+      "Đặc điểm tiên tiến của GCCN bắt nguồn từ vị trí của họ trong lực lượng sản xuất hiện đại.",
+      "Lao động công nghiệp rèn luyện cho GCCN khả năng tổ chức, kỷ luật và liên kết tập thể.",
+    ],
+  },
+  {
+    context: "Chương 2 - Nội dung sứ mệnh lịch sử",
+    points: [
+      "Sứ mệnh lịch sử của GCCN là xóa bỏ chế độ bóc lột tư bản chủ nghĩa và xây dựng xã hội mới.",
+      "Về kinh tế, GCCN thúc đẩy lực lượng sản xuất hiện đại và quan hệ sản xuất phù hợp hơn.",
+      "Về chính trị, GCCN giành và sử dụng quyền lực nhà nước để tổ chức xã hội xã hội chủ nghĩa.",
+      "Về văn hóa - tư tưởng, GCCN xây dựng hệ giá trị tiến bộ, nhân văn và bình đẳng.",
+      "Sứ mệnh lịch sử không chỉ là thay đổi chính quyền mà còn cải tạo toàn diện đời sống xã hội.",
+      "Giải phóng GCCN gắn với giải phóng nhân dân lao động và giải phóng con người.",
+      "Sứ mệnh GCCN có nội dung quốc tế nhưng được thực hiện trong từng quốc gia cụ thể.",
+      "Để thực hiện sứ mệnh, GCCN cần biến lợi ích giai cấp thành mục tiêu xã hội rộng lớn.",
+    ],
+  },
+  {
+    context: "Chương 2 - Điều kiện khách quan",
+    points: [
+      "Địa vị kinh tế của GCCN quy định vai trò đại diện cho lực lượng sản xuất tiên tiến.",
+      "Sự đối lập lợi ích căn bản với giai cấp tư sản tạo động lực đấu tranh cho GCCN.",
+      "Tính xã hội hóa của sản xuất giúp GCCN có khả năng đoàn kết và tổ chức tập thể.",
+      "Sự phát triển của chủ nghĩa tư bản làm tăng số lượng, chất lượng và yêu cầu chính trị của GCCN.",
+      "Điều kiện khách quan chỉ tạo khả năng lịch sử, không tự động bảo đảm thắng lợi.",
+      "Sứ mệnh lịch sử trở thành hiện thực khi khả năng khách quan gặp nhân tố chủ quan phù hợp.",
+    ],
+  },
+  {
+    context: "Chương 2 - Điều kiện chủ quan",
+    points: [
+      "Trình độ giác ngộ chính trị là điều kiện để GCCN hành động tự giác.",
+      "Công đoàn, đoàn thể và các hình thức liên kết giúp GCCN bảo vệ lợi ích trước mắt.",
+      "Chính đảng của GCCN là nhân tố lãnh đạo để biến phong trào thành lực lượng chính trị.",
+      "Liên minh với nông dân, trí thức và các tầng lớp lao động mở rộng cơ sở xã hội của cách mạng.",
+      "Lý luận khoa học giúp GCCN tránh rơi vào tự phát, cải lương hoặc phiêu lưu.",
+      "Kỷ luật, đoàn kết và năng lực tổ chức là phẩm chất cần thiết của GCCN cách mạng.",
+    ],
+  },
+  {
+    context: "Chương 2 - Đảng Cộng sản",
+    points: [
+      "Đảng Cộng sản là đội tiên phong chính trị của GCCN và nhân dân lao động.",
+      "Đảng ra đời từ sự kết hợp chủ nghĩa Mác - Lênin với phong trào công nhân.",
+      "Vai trò lãnh đạo của Đảng gắn với đường lối đúng, tổ chức vững và liên hệ mật thiết với nhân dân.",
+      "Xây dựng Đảng trong sạch, vững mạnh là điều kiện quan trọng để GCCN thực hiện sứ mệnh.",
+    ],
+  },
+];
+
+export const month03Quotes = createMonthQuotes(3, lessonBlocks);

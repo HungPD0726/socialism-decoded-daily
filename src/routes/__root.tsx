@@ -8,7 +8,7 @@ import {
 } from "@tanstack/react-router";
 import { useEffect } from "react";
 
-import { GroqChatbot } from "@/components/GroqChatbot";
+import { GroqChatbot } from "@/features/chat/GroqChatbot";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
 function NotFoundComponent() {

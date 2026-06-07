@@ -2,7 +2,7 @@ import { Buffer } from "node:buffer";
 import type { IncomingHttpHeaders, IncomingMessage, ServerResponse } from "node:http";
 import { Readable } from "node:stream";
 
-import { handleChatRequest } from "../src/lib/api/chat.server";
+import { handleChatRequest } from "../src/features/chat/chat.server";
 
 type ApiRequest = IncomingMessage & {
   body?: unknown;
