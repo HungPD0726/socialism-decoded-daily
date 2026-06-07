@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useState, type MouseEvent } from "react";
-import { ChevronDown, Info } from "lucide-react";
+import { ChevronDown, Info, Brain, Network } from "lucide-react";
 import { createLazyFileRoute, getRouteApi, Link } from "@tanstack/react-router";
 import { MarxLinePortrait } from "@/components/brand/MarxLinePortrait";
 import { MonthCalendar } from "@/features/home/components/MonthCalendar";
@@ -168,6 +168,20 @@ function Home() {
             >
               Về dự án
             </a>
+            <Link
+              to="/quiz/"
+              className="inline-flex shrink-0 items-center gap-1.5 py-1 transition hover:text-primary"
+            >
+              <Brain className="h-3.5 w-3.5" aria-hidden />
+              Quiz
+            </Link>
+            <Link
+              to="/mindmap/"
+              className="inline-flex shrink-0 items-center gap-1.5 py-1 transition hover:text-primary"
+            >
+              <Network className="h-3.5 w-3.5" aria-hidden />
+              Sơ đồ
+            </Link>
           </nav>
           <a
             href="#ngay"

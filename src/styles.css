@@ -4,6 +4,10 @@
 @source "../src/features/chat/GroqChatbot.tsx";
 @source "../src/features/home/components/MonthCalendar.tsx";
 @source "../src/features/home/components/ProjectIntroDialog.tsx";
+@source "../src/features/quiz/components/QuizCard.tsx";
+@source "../src/features/quiz/components/QuizProgress.tsx";
+@source "../src/features/quiz/components/QuizSummary.tsx";
+@source "../src/features/mindmap/MindmapRenderer.tsx";
 @source "../src/components/ui/button.tsx";
 @source "../src/components/ui/dialog.tsx";
 @source "../src/components/ui/textarea.tsx";
@@ -306,5 +310,50 @@
     left: -22vw;
     width: 122vw;
     opacity: 0.14;
+  }
+}
+
+@media print {
+  body {
+    font-size: 11pt;
+    background: white !important;
+    color: black !important;
+  }
+
+  /* Hide everything except the print content */
+  .print\:hidden {
+    display: none !important;
+  }
+
+  /* Force white backgrounds */
+  .print\:bg-white {
+    background-color: white !important;
+  }
+
+  /* Page margins */
+  @page {
+    margin: 1.5cm 1.8cm;
+    size: A4;
+  }
+
+  /* Avoid page breaks inside cards */
+  .print\:break-inside-avoid {
+    break-inside: avoid;
+  }
+
+  /* Allow page breaks between sections */
+  .print\:break-inside-avoid-page {
+    break-inside: avoid;
+  }
+
+  /* 2-column grid in print */
+  .print\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  /* Remove link colors in print */
+  a {
+    color: inherit !important;
+    text-decoration: none !important;
   }
 }

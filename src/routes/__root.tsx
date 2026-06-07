@@ -80,7 +80,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (state) => state.location.pathname });
-  const showChatbot = !pathname.includes("/print/");
+  const showChatbot =
+    !pathname.includes("/print/") &&
+    !pathname.startsWith("/quiz/") &&
+    !pathname.startsWith("/mindmap/");
 
   return (
     <QueryClientProvider client={queryClient}>

@@ -1,5 +1,5 @@
 import { createLazyFileRoute, getRouteApi, Link } from "@tanstack/react-router";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Brain, Network, Printer } from "lucide-react";
 
 const routeApi = getRouteApi("/chuong/$chapter");
 
@@ -47,8 +47,7 @@ function ChapterPage() {
 
       <section className="border-y border-border bg-secondary/35">
         <div className="mx-auto max-w-7xl px-6 py-8">
-          <div className="flex flex-col gap-3 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between">
-            <span>Đọc theo thứ tự ngày để giữ nhịp học đều.</span>
+          <div className="flex flex-col gap-4 text-sm md:flex-row md:items-center md:justify-between">
             <div className="flex flex-wrap gap-3">
               {previousChapter && (
                 <Link
@@ -70,6 +69,34 @@ function ChapterPage() {
                   <ArrowRight className="h-4 w-4" aria-hidden />
                 </Link>
               )}
+            </div>
+
+            {/* Feature quick-links */}
+            <div className="flex flex-wrap gap-2">
+              <Link
+                to="/quiz/$chapter"
+                params={{ chapter: String(chapter.n) }}
+                className="inline-flex items-center gap-1.5 rounded-sm border border-border bg-card px-3 py-1.5 text-xs font-medium transition hover:border-primary hover:text-primary"
+              >
+                <Brain className="h-3.5 w-3.5" aria-hidden />
+                Quiz ôn tập
+              </Link>
+              <Link
+                to="/mindmap/$chapter"
+                params={{ chapter: String(chapter.n) }}
+                className="inline-flex items-center gap-1.5 rounded-sm border border-border bg-card px-3 py-1.5 text-xs font-medium transition hover:border-primary hover:text-primary"
+              >
+                <Network className="h-3.5 w-3.5" aria-hidden />
+                Sơ đồ tư duy
+              </Link>
+              <Link
+                to="/print/$chapter"
+                params={{ chapter: String(chapter.n) }}
+                className="inline-flex items-center gap-1.5 rounded-sm border border-border bg-card px-3 py-1.5 text-xs font-medium transition hover:border-primary hover:text-primary"
+              >
+                <Printer className="h-3.5 w-3.5" aria-hidden />
+                In chương
+              </Link>
             </div>
           </div>
         </div>
