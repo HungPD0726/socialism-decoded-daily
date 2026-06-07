@@ -1,9 +1,12 @@
 @import "tailwindcss" source(none);
 /* Keep Tailwind's generated CSS scoped to files that render runtime classes. */
 @source "../src/routes/**/*.tsx";
+@source "../src/components/GroqChatbot.tsx";
 @source "../src/components/MonthCalendar.tsx";
 @source "../src/components/ProjectIntroDialog.tsx";
+@source "../src/components/ui/button.tsx";
 @source "../src/components/ui/dialog.tsx";
+@source "../src/components/ui/textarea.tsx";
 
 @custom-variant dark (&:is(.dark *));
 

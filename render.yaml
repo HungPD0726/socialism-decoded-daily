@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: socialism-decoded-daily
+    runtime: node
+    buildCommand: npm ci && npm run build:render
+    startCommand: npm run start
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_MODEL
+        value: llama-3.3-70b-versatile
+      - key: ALLOWED_ORIGIN
+        sync: false

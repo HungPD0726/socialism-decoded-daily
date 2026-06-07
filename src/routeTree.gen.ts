@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PrintCalendar2026RouteImport } from './routes/print/calendar-2026'
 import { Route as ChuongChapterRouteImport } from './routes/chuong/$chapter'
 
 const IndexRoute = IndexRouteImport.update({
@@ -17,6 +18,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+const PrintCalendar2026Route = PrintCalendar2026RouteImport.update({
+  id: '/print/calendar-2026',
+  path: '/print/calendar-2026',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ChuongChapterRoute = ChuongChapterRouteImport.update({
   id: '/chuong/$chapter',
   path: '/chuong/$chapter',
@@ -28,27 +34,31 @@ const ChuongChapterRoute = ChuongChapterRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/chuong/$chapter': typeof ChuongChapterRoute
+  '/print/calendar-2026': typeof PrintCalendar2026Route
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/chuong/$chapter': typeof ChuongChapterRoute
+  '/print/calendar-2026': typeof PrintCalendar2026Route
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/chuong/$chapter': typeof ChuongChapterRoute
+  '/print/calendar-2026': typeof PrintCalendar2026Route
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/chuong/$chapter'
+  fullPaths: '/' | '/chuong/$chapter' | '/print/calendar-2026'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/chuong/$chapter'
-  id: '__root__' | '/' | '/chuong/$chapter'
+  to: '/' | '/chuong/$chapter' | '/print/calendar-2026'
+  id: '__root__' | '/' | '/chuong/$chapter' | '/print/calendar-2026'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ChuongChapterRoute: typeof ChuongChapterRoute
+  PrintCalendar2026Route: typeof PrintCalendar2026Route
 }
 
 declare module '@tanstack/react-router' {
@@ -58,6 +68,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/print/calendar-2026': {
+      id: '/print/calendar-2026'
+      path: '/print/calendar-2026'
+      fullPath: '/print/calendar-2026'
+      preLoaderRoute: typeof PrintCalendar2026RouteImport
       parentRoute: typeof rootRouteImport
     }
     '/chuong/$chapter': {
@@ -73,6 +90,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ChuongChapterRoute: ChuongChapterRoute,
+  PrintCalendar2026Route: PrintCalendar2026Route,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
