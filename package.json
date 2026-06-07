@@ -4,7 +4,8 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "dev": "vite dev",
+    "dev": "vite dev --config vite.github.config.ts",
+    "dev:ssr": "vite dev",
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "build:render": "vite build --base=/",

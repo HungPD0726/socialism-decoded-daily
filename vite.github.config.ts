@@ -21,10 +21,28 @@ function githubPagesSpaFallback(): PluginOption {
   };
 }
 
+function localChatApiPlugin(): PluginOption {
+  return {
+    name: "local-chat-api",
+    apply: "serve",
+    configureServer(server) {
+      server.middlewares.use("/api/chat", async (req, res, next) => {
+        try {
+          const module = await server.ssrLoadModule("/api/chat.ts");
+          await module.default(req, res);
+        } catch (error) {
+          next(error);
+        }
+      });
+    },
+  };
+}
+
 // Separate Vite config for static GitHub Pages build (CSR / SPA mode).
 // Does NOT use @lovable.dev/vite-tanstack-config or TanStack Start SSR.
 export default defineConfig({
   plugins: [
+    localChatApiPlugin(),
     tanstackRouter({ target: "react" }),
     react(),
     tailwindcss(),
