@@ -1,6 +1,7 @@
 import { createLazyFileRoute, getRouteApi, Link } from "@tanstack/react-router";
 import { ArrowLeft, ArrowRight, Printer, BookOpen, Brain } from "lucide-react";
 import { MindmapRenderer } from "@/features/mindmap/MindmapRenderer";
+import { AppShell } from "@/components/AppShell";
 
 const routeApi = getRouteApi("/mindmap/$chapter");
 
@@ -14,25 +15,30 @@ function MindmapChapterPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground paper-grain">
-      <div className="banner-stripes h-1.5" />
+      <AppShell
+        extra={
+          <div className="flex items-center gap-2">
+            <Link
+              to="/quiz/$chapter"
+              params={{ chapter: String(chapter.n) }}
+              className="hidden sm:inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium transition hover:border-primary hover:text-primary"
+            >
+              <Brain className="h-3.5 w-3.5" aria-hidden />
+              Quiz
+            </Link>
+            <Link
+              to="/chuong/$chapter"
+              params={{ chapter: String(chapter.n) }}
+              className="hidden sm:inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium transition hover:border-primary hover:text-primary"
+            >
+              <BookOpen className="h-3.5 w-3.5" aria-hidden />
+              Đọc nội dung
+            </Link>
+          </div>
+        }
+      />
 
-      <div className="mx-auto max-w-7xl px-6 py-10 md:py-16">
-        {/* Top nav */}
-        <div className="mb-10 flex flex-wrap items-center gap-4 text-sm">
-          <Link
-            to="/mindmap/"
-            className="font-medium text-primary underline-offset-4 transition hover:underline"
-          >
-            ← Tất cả sơ đồ
-          </Link>
-          <span className="text-muted-foreground">·</span>
-          <Link
-            to="/"
-            className="text-muted-foreground underline-offset-4 transition hover:text-primary hover:underline"
-          >
-            Trang chủ
-          </Link>
-        </div>
+      <div className="mx-auto max-w-7xl px-4 py-10 md:px-6 md:py-16">
 
         {/* Header */}
         <div className="mb-10 grid gap-8 md:grid-cols-12 md:items-end">
@@ -109,6 +115,9 @@ function MindmapChapterPage() {
           </div>
         </div>
       </div>
+
+      {/* Bottom padding for mobile bottom bar */}
+      <div className="h-20 md:hidden" aria-hidden />
     </div>
   );
 }

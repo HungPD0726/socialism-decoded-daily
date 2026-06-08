@@ -1,10 +1,11 @@
-import { lazy, Suspense, useEffect, useState, type MouseEvent } from "react";
+import { lazy, Suspense, useEffect, useRef, useState, type MouseEvent } from "react";
 import { ChevronDown, Info, Brain, Network } from "lucide-react";
 import { createLazyFileRoute, getRouteApi, Link } from "@tanstack/react-router";
 import { MarxLinePortrait } from "@/components/brand/MarxLinePortrait";
 import { MonthCalendar } from "@/features/home/components/MonthCalendar";
 import { chapters as months } from "@/features/learning/data/chapters";
 import type { DailyQuote } from "@/features/learning/data/dailyQuotes";
+import { AppShell } from "@/components/AppShell";
 
 const ProjectIntroDialog = lazy(() =>
   import("@/features/home/components/ProjectIntroDialog").then((module) => ({
@@ -17,6 +18,7 @@ const routeApi = getRouteApi("/");
 export const Route = createLazyFileRoute("/")({
   component: Home,
 });
+
 
 const monthNames = [
   "tháng 1",
@@ -51,6 +53,32 @@ function formatQuoteDate(quote: DailyQuote) {
   return `${String(quote.day).padStart(2, "0")} / ${String(quote.month).padStart(2, "0")}`;
 }
 
+/** Hook: adds `.visible` to all `.reveal` elements inside a ref when they enter viewport */
+function useScrollReveal(containerRef: React.RefObject<HTMLElement | null>) {
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const elements = container.querySelectorAll<HTMLElement>(".reveal");
+    if (!elements.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            observer.unobserve(entry.target);
+          }
+        }
+      },
+      { threshold: 0.08, rootMargin: "0px 0px -40px 0px" },
+    );
+
+    elements.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [containerRef]);
+}
+
 function Home() {
   const { today, todaysQuote, dailyLessons, monthQuotes, remainingLessons } =
     routeApi.useLoaderData();
@@ -59,6 +87,9 @@ function Home() {
   const [activeChapter, setActiveChapter] = useState<number | null>(null);
   const [projectDialogOpen, setProjectDialogOpen] = useState(false);
   const [projectDialogMounted, setProjectDialogMounted] = useState(false);
+
+  const pageRef = useRef<HTMLDivElement>(null);
+  useScrollReveal(pageRef);
 
   useEffect(() => {
     // Chỉ hiện popup 1 lần mỗi session (không hiện lại khi navigate)
@@ -100,7 +131,7 @@ function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground paper-grain">
+    <div className="min-h-screen bg-background text-foreground paper-grain" ref={pageRef}>
       {projectDialogMounted && (
         <Suspense fallback={null}>
           <ProjectIntroDialog
@@ -111,86 +142,86 @@ function Home() {
         </Suspense>
       )}
 
-      {/* Top banner */}
-      <header className="sticky top-0 z-50 border-b-2 border-primary/80 bg-background/95 backdrop-blur">
-        <div className="banner-stripes h-1.5" />
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-4 gap-y-3 px-6 py-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground">
-              <StarIcon />
-            </div>
-            <div className="font-display text-lg leading-none">
-              <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                Hành trình
-              </div>
-              <div className="font-semibold">365 Ngày</div>
-            </div>
-          </div>
-          <nav className="order-3 flex w-full items-center gap-5 overflow-x-auto border-t border-border pt-3 text-xs font-medium md:order-2 md:w-auto md:gap-8 md:border-t-0 md:pt-0 md:text-sm">
-            <button
-              type="button"
-              onClick={() => setChapterMenuOpen((isOpen) => !isOpen)}
-              className={[
-                "inline-flex shrink-0 items-center gap-1.5 rounded-sm py-1 transition hover:text-primary focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background",
-                chapterMenuOpen && "text-primary",
-              ]
-                .filter(Boolean)
-                .join(" ")}
-              aria-expanded={chapterMenuOpen}
-              aria-controls="chapter-menu"
-            >
-              Chủ đề
-              <ChevronDown
-                className={["h-4 w-4 transition-transform", chapterMenuOpen && "rotate-180"]
-                  .filter(Boolean)
-                  .join(" ")}
-                aria-hidden
-              />
-            </button>
+      {/* ── Shared App Navigation ── */}
+      <AppShell
+        showProgress
+        extra={
+          <div className="flex items-center gap-1">
             <a
               href="#ngay"
-              onClick={(event) => handleSectionLink(event, "ngay")}
-              className="shrink-0 py-1 transition hover:text-primary"
+              onClick={(event: MouseEvent<HTMLAnchorElement>) => handleSectionLink(event, "ngay")}
+              className="btn-shimmer rounded-full bg-primary px-5 py-2 text-sm font-medium text-primary-foreground transition hover:bg-primary/90"
             >
-              Bài học hôm nay
+              Bắt đầu đọc
             </a>
-            <a
-              href="#suyngam"
-              onClick={(event) => handleSectionLink(event, "suyngam")}
-              className="shrink-0 py-1 transition hover:text-primary"
-            >
-              Suy ngẫm
-            </a>
-            <a
-              href="#vesach"
-              onClick={(event) => handleSectionLink(event, "vesach")}
-              className="shrink-0 py-1 transition hover:text-primary"
-            >
-              Về dự án
-            </a>
-            <Link
-              to="/quiz/"
-              className="inline-flex shrink-0 items-center gap-1.5 py-1 transition hover:text-primary"
-            >
-              <Brain className="h-3.5 w-3.5" aria-hidden />
-              Quiz
-            </Link>
-            <Link
-              to="/mindmap/"
-              className="inline-flex shrink-0 items-center gap-1.5 py-1 transition hover:text-primary"
-            >
-              <Network className="h-3.5 w-3.5" aria-hidden />
-              Sơ đồ
-            </Link>
-          </nav>
+          </div>
+        }
+      />
+
+      {/* ── Home page section sub-nav ── */}
+      <div
+        className="sticky top-[53px] z-40 border-b border-border/50 bg-background/95 backdrop-blur"
+      >
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2 md:px-6">
+          {/* Chapter sub-nav */}
+          <button
+            type="button"
+            onClick={() => setChapterMenuOpen((isOpen) => !isOpen)}
+            className={[
+              "inline-flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+              chapterMenuOpen && "bg-secondary text-primary",
+            ]
+              .filter(Boolean)
+              .join(" ")}
+            aria-expanded={chapterMenuOpen}
+            aria-controls="chapter-menu"
+          >
+            <span className="text-xs uppercase tracking-wider">Chủ đề</span>
+            <ChevronDown
+              className={["h-3.5 w-3.5 transition-transform", chapterMenuOpen && "rotate-180"]
+                .filter(Boolean)
+                .join(" ")}
+              aria-hidden
+            />
+          </button>
           <a
             href="#ngay"
             onClick={(event) => handleSectionLink(event, "ngay")}
-            className="order-2 shrink-0 rounded-full bg-primary px-5 py-2 text-sm font-medium text-primary-foreground transition hover:bg-primary/90 md:order-3"
+            className="shrink-0 py-1.5 px-3 rounded-md text-sm transition hover:bg-secondary hover:text-primary"
           >
-            Bắt đầu đọc
+            Bài học hôm nay
           </a>
+          <a
+            href="#suyngam"
+            onClick={(event) => handleSectionLink(event, "suyngam")}
+            className="shrink-0 py-1.5 px-3 rounded-md text-sm transition hover:bg-secondary hover:text-primary"
+          >
+            Suy ngẫm
+          </a>
+          <a
+            href="#vesach"
+            onClick={(event) => handleSectionLink(event, "vesach")}
+            className="shrink-0 py-1.5 px-3 rounded-md text-sm transition hover:bg-secondary hover:text-primary"
+          >
+            Về dự án
+          </a>
+          <Link
+            to="/quiz/"
+            className="inline-flex shrink-0 items-center gap-1.5 py-1.5 px-3 rounded-md text-sm transition hover:bg-secondary hover:text-primary"
+          >
+            <Brain className="h-3.5 w-3.5" aria-hidden />
+            Quiz
+          </Link>
+          <Link
+            to="/mindmap/"
+            className="inline-flex shrink-0 items-center gap-1.5 py-1.5 px-3 rounded-md text-sm transition hover:bg-secondary hover:text-primary"
+          >
+            <Network className="h-3.5 w-3.5" aria-hidden />
+            Sơ đồ
+          </Link>
         </div>
+
+        {/* Chapter dropdown */}
         <div
           id="chapter-menu"
           className={[
@@ -199,7 +230,7 @@ function Home() {
           ].join(" ")}
           aria-hidden={!chapterMenuOpen}
         >
-          <div className="mx-auto max-w-7xl px-6 py-5">
+          <div className="mx-auto max-w-7xl px-4 py-5 md:px-6">
             <div className="grid gap-px overflow-hidden rounded-sm border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
               {months.map((m) => {
                 const menuItemClass =
@@ -242,36 +273,36 @@ function Home() {
             </div>
           </div>
         </div>
-      </header>
+      </div>
 
-      {/* Hero */}
+      {/* ── Hero ── */}
       <section className="hero-shell relative isolate overflow-hidden">
         <figure className="marx-hero-portrait" aria-hidden>
           <MarxLinePortrait />
         </figure>
 
-        <div className="relative z-10 mx-auto grid max-w-7xl gap-12 px-6 py-20 md:grid-cols-12 md:py-32">
+        <div className="relative z-10 mx-auto grid max-w-7xl gap-12 px-4 py-16 md:grid-cols-12 md:py-28 md:px-6">
           <div className="md:col-span-7">
-            <div className="mb-6 flex items-center gap-3 text-xs font-medium uppercase tracking-[0.3em] text-primary">
+            <div className="reveal mb-6 flex items-center gap-3 text-xs font-medium uppercase tracking-[0.3em] text-primary">
               <span className="h-px w-10 bg-primary" />
               Niên giám 2026
             </div>
-            <h1 className="font-display text-5xl leading-[0.95] md:text-7xl lg:text-8xl">
+            <h1 className="reveal reveal-delay-1 font-display text-5xl leading-[0.95] md:text-7xl lg:text-8xl">
               365 ngày cùng
               <br />
               <span className="italic text-primary">Chủ nghĩa</span>
               <br />
               Xã hội Khoa học
             </h1>
-            <p className="mt-8 max-w-xl text-lg leading-relaxed text-muted-foreground">
+            <p className="reveal reveal-delay-2 mt-8 max-w-xl text-lg leading-relaxed text-muted-foreground">
               Mỗi ngày một bài học. Mỗi tháng một chủ đề. Một năm để hiểu thấu tư tưởng đã định hình
               thế kỷ XX — và còn vang vọng đến hôm nay.
             </p>
-            <div className="mt-10 flex flex-wrap items-center gap-4">
+            <div className="reveal reveal-delay-3 mt-10 flex flex-wrap items-center gap-4">
               <a
                 href="#thang"
                 onClick={(event) => handleSectionLink(event, "thang")}
-                className="rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition hover:bg-foreground/85"
+                className="btn-shimmer rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition hover:bg-foreground/85"
               >
                 Khám phá 12 tháng →
               </a>
@@ -285,7 +316,7 @@ function Home() {
             </div>
           </div>
 
-          <aside className="md:col-span-5">
+          <aside className="reveal reveal-delay-2 md:col-span-5">
             <MonthCalendar initialQuotes={monthQuotes} today={today} />
           </aside>
         </div>
@@ -296,9 +327,9 @@ function Home() {
         <StarIcon className="h-5 w-5" />
       </div>
 
-      {/* 12 months */}
-      <section id="thang" className="mx-auto max-w-7xl scroll-mt-28 px-6 py-24">
-        <div className="mb-14 flex items-end justify-between">
+      {/* ── 12 months grid ── */}
+      <section id="thang" className="mx-auto max-w-7xl scroll-mt-28 px-4 py-24 md:px-6">
+        <div className="reveal mb-14 flex items-end justify-between">
           <div>
             <div className="mb-3 text-xs font-medium uppercase tracking-[0.3em] text-primary">
               Bản đồ một năm
@@ -311,12 +342,12 @@ function Home() {
         </div>
 
         <div className="grid gap-px overflow-hidden rounded-sm border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
-          {months.map((m) => (
+          {months.map((m, i) => (
             <article
               key={m.n}
               id={`chuong-${m.n}`}
               className={[
-                "group relative scroll-mt-32 bg-card p-8 transition hover:bg-primary hover:text-primary-foreground",
+                `reveal reveal-delay-${Math.min(i + 1, 12)} group relative scroll-mt-32 bg-card p-8 transition-all duration-200 hover:bg-primary hover:text-primary-foreground card-scale`,
                 activeChapter === m.n && "chapter-card-selected",
               ]
                 .filter(Boolean)
@@ -352,10 +383,10 @@ function Home() {
         </div>
       </section>
 
-      {/* Daily series */}
+      {/* ── Daily series ── */}
       <section id="ngay" className="scroll-mt-28 bg-foreground text-background">
-        <div className="mx-auto max-w-7xl px-6 py-24">
-          <div className="mb-14 max-w-2xl">
+        <div className="mx-auto max-w-7xl px-4 py-24 md:px-6">
+          <div className="reveal mb-14 max-w-2xl">
             <div className="mb-3 text-xs font-medium uppercase tracking-[0.3em] text-accent">
               Chuỗi {monthNames[today.month - 1]}
             </div>
@@ -372,7 +403,7 @@ function Home() {
             {dailyLessons.map((quote: DailyQuote, index: number) => (
               <article
                 key={`${quote.month}-${quote.day}`}
-                className="relative flex flex-col border border-background/15 bg-background/[0.03] p-8 backdrop-blur transition hover:bg-background/[0.06]"
+                className={`reveal reveal-delay-${index + 1} relative flex flex-col border border-background/15 bg-background/[0.03] p-8 backdrop-blur transition-all duration-200 hover:bg-background/[0.08] hover:border-background/30`}
               >
                 <div className="flex items-center justify-between">
                   <div className="font-display text-3xl text-accent">{formatQuoteDate(quote)}</div>
@@ -385,7 +416,7 @@ function Home() {
                   <div className="mb-2 text-[10px] font-semibold uppercase tracking-[0.3em] text-accent">
                     Nội dung
                   </div>
-                  <p className="font-display text-xl leading-snug">“{quote.quote}”</p>
+                  <p className="font-display text-xl leading-snug">"{quote.quote}"</p>
                 </div>
                 <div className="mt-6">
                   <div className="mb-2 text-[10px] font-semibold uppercase tracking-[0.3em] text-accent">
@@ -412,27 +443,29 @@ function Home() {
         </div>
       </section>
 
-      {/* Quote section */}
-      <section id="suyngam" className="mx-auto max-w-5xl scroll-mt-28 px-6 py-32 text-center">
-        <StarIcon className="mx-auto h-6 w-6 text-primary" />
-        {todaysQuote ? (
-          <>
-            <blockquote className="mt-8 font-display text-3xl leading-tight md:text-5xl">
-              “{todaysQuote.quote}”
-            </blockquote>
-            <div className="mt-8 text-sm uppercase tracking-[0.3em] text-muted-foreground">
-              {todaysQuote.author} · {todaysQuote.context}
-            </div>
-          </>
-        ) : (
-          <p className="mt-8 text-lg text-muted-foreground">Nội dung hôm nay đang được cập nhật.</p>
-        )}
+      {/* ── Quote section ── */}
+      <section id="suyngam" className="mx-auto max-w-5xl scroll-mt-28 px-4 py-32 text-center md:px-6">
+        <div className="reveal">
+          <StarIcon className="mx-auto h-6 w-6 text-primary" />
+          {todaysQuote ? (
+            <>
+              <blockquote className="mt-8 font-display text-3xl leading-tight md:text-5xl">
+                "{todaysQuote.quote}"
+              </blockquote>
+              <div className="mt-8 text-sm uppercase tracking-[0.3em] text-muted-foreground">
+                {todaysQuote.author} · {todaysQuote.context}
+              </div>
+            </>
+          ) : (
+            <p className="mt-8 text-lg text-muted-foreground">Nội dung hôm nay đang được cập nhật.</p>
+          )}
+        </div>
       </section>
 
-      {/* About */}
+      {/* ── About ── */}
       <section id="vesach" className="scroll-mt-28 border-t border-border bg-secondary/40">
-        <div className="mx-auto grid max-w-7xl gap-12 px-6 py-24 md:grid-cols-2">
-          <div>
+        <div className="mx-auto grid max-w-7xl gap-12 px-4 py-24 md:grid-cols-2 md:px-6">
+          <div className="reveal">
             <div className="mb-3 text-xs font-medium uppercase tracking-[0.3em] text-primary">
               Về dự án
             </div>
@@ -440,9 +473,9 @@ function Home() {
               Một năm. Một tư tưởng. Một thói quen mới mỗi sáng.
             </h2>
           </div>
-          <div className="space-y-5 text-base leading-relaxed text-muted-foreground">
+          <div className="reveal reveal-delay-2 space-y-5 text-base leading-relaxed text-muted-foreground">
             <p>
-              <strong className="text-foreground">365 Ngày</strong> là dự án đọc & suy ngẫm về Chủ
+              <strong className="text-foreground">365 Ngày</strong> là dự án đọc &amp; suy ngẫm về Chủ
               nghĩa Xã hội Khoa học, được biên soạn cho độc giả Việt Nam đương đại — sinh viên,
               người lao động, người làm chính sách, và bất kỳ ai quan tâm tới câu hỏi:{" "}
               <em>xã hội này đang đi về đâu?</em>
@@ -482,8 +515,9 @@ function Home() {
         </div>
       </section>
 
-      <footer className="border-t border-border">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 py-8 text-xs uppercase tracking-[0.25em] text-muted-foreground md:flex-row">
+      {/* ── Footer ── */}
+      <footer className="border-t border-border pb-20 md:pb-0">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 py-8 text-xs uppercase tracking-[0.25em] text-muted-foreground md:flex-row md:px-6">
           <div>© 2026 · 365 Ngày cùng CNXHKH</div>
           <div>Biên soạn cho cộng đồng học thuật Việt Nam</div>
         </div>

@@ -1,7 +1,9 @@
-import { createLazyFileRoute, getRouteApi, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { createLazyFileRoute, getRouteApi, Link } from "@tanstack/react-router";
 import { BookOpen, Star } from "lucide-react";
 import { getBestScore } from "@/features/quiz/data/quizQuestions";
+import type { Chapter } from "@/features/learning/data/chapters";
+import { AppShell } from "@/components/AppShell";
 
 const routeApi = getRouteApi("/quiz/");
 
@@ -23,17 +25,10 @@ function QuizIndexPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground paper-grain">
-      <div className="banner-stripes h-1.5" />
+      <AppShell />
 
-      <div className="mx-auto max-w-7xl px-6 py-10 md:py-16">
-        <Link
-          to="/"
-          className="inline-flex items-center gap-2 text-sm font-medium text-primary underline-offset-4 transition hover:underline"
-        >
-          ← Về trang chủ
-        </Link>
-
-        <div className="mt-12 mb-14">
+      <div className="mx-auto max-w-7xl px-4 py-10 md:px-6 md:py-16">
+        <div className="mt-4 mb-14">
           <div className="mb-3 text-xs font-medium uppercase tracking-[0.3em] text-primary">
             Ôn tập
           </div>
@@ -45,7 +40,7 @@ function QuizIndexPage() {
         </div>
 
         <div className="grid gap-px overflow-hidden rounded-sm border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
-          {chapters.map((ch) => {
+          {chapters.map((ch: Chapter) => {
             const best = bestScores[ch.n];
             const hasBest = best !== null && best !== undefined;
 
@@ -80,6 +75,9 @@ function QuizIndexPage() {
           })}
         </div>
       </div>
+
+      {/* Bottom padding for mobile bottom bar */}
+      <div className="h-20 md:hidden" aria-hidden />
     </div>
   );
 }

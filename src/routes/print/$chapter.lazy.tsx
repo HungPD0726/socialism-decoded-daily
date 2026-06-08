@@ -1,5 +1,6 @@
 import { createLazyFileRoute, getRouteApi, Link } from "@tanstack/react-router";
 import { Printer, ArrowLeft } from "lucide-react";
+import type { DailyQuote } from "@/features/learning/data/dailyQuotes";
 
 const routeApi = getRouteApi("/print/$chapter");
 
@@ -9,9 +10,10 @@ export const Route = createLazyFileRoute("/print/$chapter")({
 
 function PrintChapterPage() {
   const { chapter, quotes } = routeApi.useLoaderData();
+  const typedQuotes = quotes as DailyQuote[];
 
   // Group quotes by context section
-  const sections = quotes.reduce<{ context: string; items: typeof quotes }[]>((acc, q) => {
+  const sections = typedQuotes.reduce<{ context: string; items: DailyQuote[] }[]>((acc, q) => {
     const last = acc[acc.length - 1];
     if (last && last.context === q.context) {
       last.items.push(q);

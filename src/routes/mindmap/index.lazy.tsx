@@ -1,6 +1,7 @@
 import { createLazyFileRoute, getRouteApi, Link } from "@tanstack/react-router";
 import { Network } from "lucide-react";
 import type { Chapter } from "@/features/learning/data/chapters";
+import { AppShell } from "@/components/AppShell";
 
 const routeApi = getRouteApi("/mindmap/");
 
@@ -13,17 +14,10 @@ function MindmapIndexPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground paper-grain">
-      <div className="banner-stripes h-1.5" />
+      <AppShell />
 
-      <div className="mx-auto max-w-7xl px-6 py-10 md:py-16">
-        <Link
-          to="/"
-          className="inline-flex items-center gap-2 text-sm font-medium text-primary underline-offset-4 transition hover:underline"
-        >
-          ← Về trang chủ
-        </Link>
-
-        <div className="mt-12 mb-14">
+      <div className="mx-auto max-w-7xl px-4 py-10 md:px-6 md:py-16">
+        <div className="mt-4 mb-14">
           <div className="mb-3 text-xs font-medium uppercase tracking-[0.3em] text-primary">
             Trực quan hóa
           </div>
@@ -59,6 +53,9 @@ function MindmapIndexPage() {
           ))}
         </div>
       </div>
+
+      {/* Bottom padding for mobile bottom bar */}
+      <div className="h-20 md:hidden" aria-hidden />
     </div>
   );
 }

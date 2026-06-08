@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { createLazyFileRoute, getRouteApi, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
+import { AppShell } from "@/components/AppShell";
 
 import { QuizCard } from "@/features/quiz/components/QuizCard";
 import { QuizProgress } from "@/features/quiz/components/QuizProgress";
@@ -99,26 +100,19 @@ function QuizChapterPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground paper-grain">
-      <div className="banner-stripes h-1.5" />
-
-      <div className="mx-auto max-w-3xl px-6 py-10 md:py-16">
-        {/* Back nav */}
-        <div className="mb-10 flex flex-wrap items-center gap-4 text-sm">
-          <Link
-            to="/quiz/"
-            className="font-medium text-primary underline-offset-4 transition hover:underline"
-          >
-            ← Chọn chủ đề khác
-          </Link>
-          <span className="text-muted-foreground">·</span>
+      <AppShell
+        extra={
           <Link
             to="/chuong/$chapter"
             params={{ chapter: String(chapter.n) }}
-            className="text-muted-foreground underline-offset-4 transition hover:text-primary hover:underline"
+            className="text-sm font-medium text-muted-foreground underline-offset-4 transition hover:text-primary hover:underline"
           >
             Đọc nội dung chương
           </Link>
-        </div>
+        }
+      />
+
+      <div className="mx-auto max-w-3xl px-4 py-10 md:px-6 md:py-16">
 
         {/* Header */}
         <div className="mb-10">
@@ -173,6 +167,9 @@ function QuizChapterPage() {
           />
         )}
       </div>
+
+      {/* Bottom padding for mobile bottom bar */}
+      <div className="h-20 md:hidden" aria-hidden />
     </div>
   );
 }
