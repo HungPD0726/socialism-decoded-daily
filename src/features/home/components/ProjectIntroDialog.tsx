@@ -36,7 +36,7 @@ function QrImage() {
     <img
       src={src}
       alt="QR dẫn đến website 365 Ngày cùng Chủ nghĩa Xã hội Khoa học"
-      className="h-32 w-32 object-contain"
+      className="h-full w-full object-contain"
       onError={() => {
         setSrc((currentSrc) =>
           currentSrc.endsWith(QR_IMAGE_LOCAL_SRC) ? QR_IMAGE_DEPLOYED_SRC : QR_IMAGE_LOCAL_SRC,
@@ -79,13 +79,10 @@ export function ProjectIntroDialog({ members, open, onOpenChange }: ProjectIntro
               </ul>
             </div>
 
-            <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-primary/20 bg-muted/30 p-4">
-              <div className="relative group overflow-hidden rounded-lg bg-white p-2 shadow-md transition-all duration-300 hover:scale-[1.02] hover:shadow-lg">
+            <div className="flex items-center justify-center rounded-xl border border-dashed border-primary/20 bg-muted/30 p-6">
+              <div className="relative group overflow-hidden rounded-lg bg-white p-2.5 shadow-md transition-all duration-300 hover:scale-[1.02] hover:shadow-lg w-full max-w-[220px] aspect-square flex items-center justify-center">
                 <QrImage />
               </div>
-              <p className="mt-3 max-w-[200px] text-center text-xs text-muted-foreground">
-                Quét mã QR để truy cập nhanh dự án trên thiết bị di động
-              </p>
             </div>
           </div>
 
