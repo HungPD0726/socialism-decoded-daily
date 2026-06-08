@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogClose,
@@ -13,6 +14,37 @@ type ProjectIntroDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };
+
+const QR_IMAGE_LOCAL_SRC = "/calendar-web-qr.png";
+const QR_IMAGE_DEPLOYED_SRC = `${import.meta.env.BASE_URL}calendar-web-qr.png`;
+
+function getQrImageSrc() {
+  if (typeof window === "undefined") return QR_IMAGE_LOCAL_SRC;
+  return ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname)
+    ? QR_IMAGE_LOCAL_SRC
+    : QR_IMAGE_DEPLOYED_SRC;
+}
+
+function QrImage() {
+  const [src, setSrc] = useState(QR_IMAGE_LOCAL_SRC);
+
+  useEffect(() => {
+    setSrc(getQrImageSrc());
+  }, []);
+
+  return (
+    <img
+      src={src}
+      alt="QR dẫn đến website 365 Ngày cùng Chủ nghĩa Xã hội Khoa học"
+      className="h-32 w-32 object-contain"
+      onError={() => {
+        setSrc((currentSrc) =>
+          currentSrc.endsWith(QR_IMAGE_LOCAL_SRC) ? QR_IMAGE_DEPLOYED_SRC : QR_IMAGE_LOCAL_SRC,
+        );
+      }}
+    />
+  );
+}
 
 export function ProjectIntroDialog({ members, open, onOpenChange }: ProjectIntroDialogProps) {
   return (
@@ -33,15 +65,28 @@ export function ProjectIntroDialog({ members, open, onOpenChange }: ProjectIntro
             </DialogDescription>
           </DialogHeader>
 
-          <div className="border-l-2 border-primary pl-5">
-            <div className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">
-              Thành viên
+          <div className="grid gap-6 sm:grid-cols-2">
+            <div className="border-l-2 border-primary pl-5">
+              <div className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">
+                Thành viên
+              </div>
+              <ul className="mt-3 grid gap-2 text-sm text-foreground">
+                {members.map((member) => (
+                  <li key={member} className="hover:text-primary transition-colors">
+                    {member}
+                  </li>
+                ))}
+              </ul>
             </div>
-            <ul className="mt-3 grid gap-2 text-sm text-foreground sm:grid-cols-2">
-              {members.map((member) => (
-                <li key={member}>{member}</li>
-              ))}
-            </ul>
+
+            <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-primary/20 bg-muted/30 p-4">
+              <div className="relative group overflow-hidden rounded-lg bg-white p-2 shadow-md transition-all duration-300 hover:scale-[1.02] hover:shadow-lg">
+                <QrImage />
+              </div>
+              <p className="mt-3 max-w-[200px] text-center text-xs text-muted-foreground">
+                Quét mã QR để truy cập nhanh dự án trên thiết bị di động
+              </p>
+            </div>
           </div>
 
           <DialogFooter>
